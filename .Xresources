@@ -1,0 +1,317 @@
+!-------------------------------------------------------------------------------
+! NOTE
+!-------------------------------------------------------------------------------
+! Can reload with:
+!     xrdb -merge ~/.Xdefaults
+! Show currently applied resources:
+!     xrdb -query
+!
+! ''By convention, the default instance for an X program is just its name, and
+! the class is just its name with the first letter capitalized, unless the
+! first letter is an "X," in which case the first two letters are capitalized.
+! For example, the "xterm" programs instance is "xterm" and its class is
+! "XTerm," and the program "mwm" has "mwm" as an instance, and "Mwm" as a
+! class.''
+!
+! Entries:
+!     !<COMMENT>
+!     [<CLASS   >]*<RESOURCE>: <VALUE>
+!     [<INSTANCE>]*<RESOURCE>: <VALUE>
+!     [<CLASS   >].<RESOURCE>: <VALUE>
+!     [<INSTANCE>].<RESOURCE>: <VALUE>
+!
+! CLASS:    ALL invocations of program.
+! INSTANCE: A process which is given a particular name.
+! -none-:   ALL invocations of ALL X programs.
+!
+! *** INSTANCE (xterm) overrides CLASS (XTerm) ***
+!
+! *:        Loose Binding - Apply to all the child windows within the top-level
+!                           window (such as menus).
+! .:        Tight Binding - Apply to only the top-level window.
+!
+! xprop output:
+!     WM_CLASS(STRING) = "urxvt", "URxvt"
+!     WM_CLASS(STRING) = "mycustomname", "URxvt"
+!     ...
+!-------------------------------------------------------------------------------
+
+
+
+!----------------------------------------------------------------------------xft
+!
+!
+!      X F T - Setting
+!
+!
+!Xft*dpi: 75
+Xft*hinting: 1
+Xft*hintstyle: hintfull
+Xft*antialias: 1
+
+
+
+!-------------------------------------------------------------------------cursor
+!
+!
+!      C U R S O R - Setting
+!
+!
+Xcursor*theme: CURSORS.NeoAlien
+Xcursor*size: 32
+
+
+
+!--------------------------------------------------------------------------xterm
+!
+!
+!      X T E R M - Setting
+!
+!
+
+xterm*background: black
+xterm*foreground: lightgray
+
+
+
+!--------------------------------------------------------------------------urxvt
+!
+!
+!      U R X V T - Setting
+!
+!
+
+URxvt*depth:                 32
+!URxvt*background:            rgba:0000/0000/0000/cccc
+!URxvt*background:            [75]#000000
+URxvt*background:            #000000
+URxvt*foreground:            white
+
+!! Pseudo-Transparency
+!URxvt*shading:               15
+!URxvt*transparent:           true
+
+! Cursor, blinking block:
+!     printf '\33[1 q'
+! Cursor, blinking underline:
+!     printf '\33[3 q'
+! Cursor, blinking bar:
+!     printf '\33[5 q'
+! Cursor, solid block:
+!     printf '\33[2 q'
+! Cursor, solid underline:
+!     printf '\33[4 q'
+! Cursor, solid bar:
+!     printf '\33[6 q'
+URxvt*cursorBlink:           1
+!URxvt*cursorUnderline:       1
+
+
+
+!URxvt*pointerBlank: True
+
+!Why dont these work???
+!URxvt*pointerShape: circle
+!Xterm*pointerShape: circle
+!rxvt*pointerShape: circle
+!URxvt.pointerShape: circle
+!Xterm.pointerShape: circle
+!rxvt.pointerShape: circle
+!*pointerShape: circle
+!.pointerShape: circle
+
+
+! Helps with powerline symbol-seams?
+URxvt*letterSpace: -1
+
+! List fonts to get proper name to use: fc-list
+
+! Symbola used for braille symbols (for diagram)
+
+! URXVT SUPPORTS MULTIPLE FONTS WITH FALLBACK!
+!URxvt*font: xft:font1,\
+!            xft:font2
+
+!URxvt*font:                  xft:DroidSansMono\ Nerd\ Font\ Mono:pixelsize=14:antialias=true:style=Book:hinting=true
+
+URxvt*font:                  xft:QDNX\ DroidSansMono\ Nerd\ Font\ Mono:pixelsize=14:antialias=true:style=Book:hinting=true,\
+                             xft:Symbola:pixelsize=14:antialias=true:style=Regular:hinting=true
+
+!URxvt*font:                  xft:Bitstream Vera Sans Mono:pixelsize=11:antialias=true
+!URxvt*font:                  xft:Bitstream Vera Sans Mono:pixelsize=14:antialias=true
+!URxvt*font:                  xft:Droid Sans Mono:pixelsize=10:antialias=true
+!URxvt*font:                  xft:monofur:pixelsize=13:antialias=true
+!URxvt*font:                  -*-proggycleansz-*-*-*-*-*-*-*-*-*-*-*-*
+!URxvt*font:                  -*-proggyclean-*-*-*-*-*-*-*-*-*-*-*-*
+!URxvt*font:                  xft:Coding Font Tobi:pixelsize=16:antialias=true
+
+!Others:
+!URxvt*font:                  -*-dina-medium-r-*-*-*-*-*-*-*-*-*-*
+!URxvt*font:                  xft:Codename Coder Free 4F:pixelsize=12:antialias=true
+!URxvt*font:                  xft:F25 Bank Printer:pixelsize=10:antialias=true
+!URxvt*font:                  xft:Inconsolata:pixelsize=12:antialias=false
+!URxvt*font:                  xft:Coding Font Tobi:pixelsize=10:antialias=true
+!URxvt*font:                  xft:Hack:pixelsize=10:antialias=true
+!URxvt*font:                  -*-MonteCarlo-medium-r-*-*-*-*-*-*-*-*-*-*
+!URxvt*font:                  xft:Coding Font Tobi:pixelsize=10:antialias=true
+!URxvt*font:                  -*-proggycleansz-*-*-*-*-*-*-*-*-*-*-*-*
+
+!No like?:
+!URxvt*font:                      -*-smoothansi-*-*-*-*-*-*-*-*-*-*-*-*
+!URxvt*font:                      -*-drift-*-*-*-*-*-*-*-*-*-*-*-*
+!URxvt*font:                      -*-proggyopti-*-*-*-*-*-*-*-*-*-*-*-*
+!URxvt*font:                      -*-proggyclean-*-*-*-*-*-*-*-*-*-*-*-*
+
+
+
+URxvt*xftAntialias:              true
+URxvt*scrollBar:                 true
+!URxvt*scrollBar_right:           false
+URxvt*scrollBar_right:           true
+!URxvt*scrollBar_floating:        false
+URxvt*scrollBar_floating:        true
+!URxvt*scrollColor:               #b2b2b2
+URxvt*scrollColor:               #202020
+!URxvt*scrollBar:                 off
+URxvt*troughColor:               #969696
+!URxvt*saveLines:                   64
+URxvt*saveLines:                 2000
+!Don't do this unless there's a good reason? ( https://bbs.archlinux.org/viewtopic.php?pid=451207#p451207 )
+!URxvt*termName:                  xterm
+!URxvt*termName:                  rxvt-unicode-256color
+
+!blue
+!DEFAULTS:
+!URxvt*color4:                    Blue3
+!URxvt*color12:                   Blue
+!URxvt*color4:                    #8CA0B0
+!URxvt*color12:                   #3D6A82
+URxvt*color4:                    RoyalBlue3
+URxvt*color12:                   RoyalBlue
+
+!magenta
+!DEFAULTS:
+!URxvt*color5:                    Magenta3
+!URxvt*color13:                   Magenta
+!URxvt*color5:                    #CC98E0
+!URxvt*color13:                   #E1A2DC
+!URxvt*color5:                    Maroon3
+!URxvt*color13:                   Maroon
+URxvt*color5:                    MediumOrchid3
+URxvt*color13:                   MediumOrchid
+
+!When theres a bell, generate a WM urgent message
+URxvt*urgentOnBell:              true
+
+URxvt*perl-ext-common:           default,matcher
+!URxvt*colorUL:                   #86A2BE
+!URxvt*matcher.rend.0:            Uline Bold fg5 bg6
+URxvt*matcher.rend.0:            Uline Bold fg1 bg5
+
+!Clickable URLS
+!URxvt*perl-ext:                  default,matcher
+!URxvt*urlLauncher:               uzbl_visit_link.sh
+URxvt*urlLauncher:               x-www-browser
+!URxvt*matcher.button:            1
+!URxvt*keysym.Control-Delete:     perl:matcher
+!URxvt*underlineURLs:             true
+
+!Disable urxvts CTRL-SHIFT love ( but all the unicode behaviour :( )
+!URxvt*iso14755_52:               false
+!URxvt*iso14755:                  false
+
+!Alternative path for perl exts?
+!URxvt*perl-lib:                  /home/krayon/.urxvt-perl
+
+!Alt+u -able URLs
+URxvt*perl-ext:                  default,url-select,keyboard-select,clipboard,font-size
+URxvt*keysym.M-u:                perl:url-select:select_next
+URxvt*url-select.launcher:       /home/krayon/bin/clipthis.sh
+URxvt*url-select.underline:      true
+
+!Hold Ctrl+u to do unicode chars
+URxvt*perl-ext:                  default,url-select,keyboard-select,clipboard,font-size,enter-unicode
+URxvt*keysym.Control-u:          perl:enter-unicode:start
+
+!NOTE: You can hold Ctrl+Shift+LeftMouse to hover over characters and query
+!      their ASCII/UNICODE value
+
+!Paste (confirmation)    ( confirm-paste )
+!Paste (no-confirmation) ( -confirm-paste )
+URxvt*perl-ext:                  default,url-select,keyboard-select,clipboard,font-size,enter-unicode,-confirm-paste
+
+! ... and keyboard selectable text with Ctrl+i :D
+URxvt*keysym.Control-i:          perl:keyboard-select:activate
+!Doesnt work, even with iso14755 disabled above (at least with version 9.15-3
+!URxvt*keysym.Control-I:          perl:clipboard:paste
+
+! ... font resize with Ctrl-Up/Ctrl-Down
+URxvt*keysym.Control-Up:         perl:font-size:increase
+URxvt*keysym.Control-Down:       perl:font-size:decrease
+!URxvt*keysym.Control-S-Up:      perl:font-size:incglobal
+!URxvt*keysym.Control-S-Down:    perl:font-size:decglobal
+!URxvt*keysym.Control-equal:     perl:font-size:reset
+!URxvt*keysym.Control-slash:     perl:font-size:show
+
+
+
+! MINI URXVT
+miniurxvt.depth:                 32
+miniurxvt.background:            [32]#000000
+miniurxvt.foreground:            white
+miniurxvt.font:                  xft:Bitstream Vera Sans Mono:pixelsize=11:antialias=true
+miniurxvt.xftAntialias:          true
+miniurxvt.scrollBar_right:       true
+miniurxvt.scrollBar_floating:    true
+miniurxvt.scrollColor:           #202020
+miniurxvt.troughColor:           #969696
+miniurxvt.saveLines:             2000
+miniurxvt.termName:		         xterm
+!blue
+miniURxvt*color4:                #8CA0B0
+miniURxvt*color12:               #3D6A82
+!magenta
+miniURxvt*color5:                #CC98E0
+miniURxvt*color13:               #E1A2DC
+
+
+
+!--------------------------------------------------------------------------dzen2
+!
+!
+!      D Z E N 2
+!
+!
+!dzen2*font:                      -*-ohsnap-medium-*-*-*-14-*-*-*-*-*-*-*
+dzen2*font:                  Codename Coder Free 4F:pixelsize=12:antialias=true
+dzen2*font:                  ModeNine-9
+dzen2*font:                  ModeNine-9:pixelsize=12:antialias=true
+!!dzen2*font:                  More Perfect DOS VGA:pixelsize=12:antialias=false
+!dzen2*font:                  More Perfect DOS VGA:pixelsize=15:antialias=true
+dzen2*font:                  More Perfect DOS VGA:pixelsize=16:antialias=false
+!dzen2*font:                  Less Perfect DOS VGA:pixelsize=15:antialias=true
+
+
+
+!--------------------------------------------------------------------------dmenu
+!
+!
+!      D M E N U
+!
+!
+!dmenu*font:                  Codename Coder Free 4F:pixelsize=12:antialias=true
+dmenu*font:                  Codename Coder Free 4F:pixelsize=15:antialias=true
+!dmenu*font:                  More Perfect DOS VGA:pixelsize=16:antialias=false
+
+
+
+!---------------------------------------------------------------------------sxiv
+!
+!
+!      S X I V
+!
+!
+Sxiv.font:                  Codename Coder Free 4F:pixelsize=15:antialias=true
+Sxiv.background:            #555555
+Sxiv.foreground:            #eeeeee
+
