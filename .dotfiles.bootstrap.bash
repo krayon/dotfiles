@@ -116,3 +116,11 @@ sleep 1
 
 # Finally, pull the files
 git --git-dir="${repo_path}" --work-tree="${HOME}" pull --ff-only
+
+# And restore DELETED files
+while read -r line; do #{
+    git --git-dir="${repo_path}" --work-tree="${HOME}" restore "${line}"
+done < <(\
+    git --git-dir="${repo_path}" --work-tree="${HOME}" status --porcelain=v1\
+    |sed -n 's/^ D //p'\
+) #}
