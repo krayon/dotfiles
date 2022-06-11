@@ -61,7 +61,7 @@ EOF
     true
 } || {
 
-    [ ! -n "$(git status --git-dir="${repo_path}" --porcelain=v1)" ] && {
+    [ ! -n "$(git --git-dir="${repo_path}" status --porcelain=v1)" ] && {
         echo "[1;31mERROR:[0;0m Repository isn't clean, refusing to delete (use -k|--keep ?)"
         exit 1
     }
