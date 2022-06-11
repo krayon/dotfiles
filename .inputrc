@@ -1,0 +1,58 @@
+# .inputrc is used by readline(3)
+#
+# NOTE: There's also editline (.editrc)
+#
+
+# Uses readline:
+#   HEAPS OF STUFF!
+
+# ***********************************************************************
+# ***** HOLY SHIT, ON SOME DISTROS /etc/inputrc includes ~/.inputrc *****
+# ***********************************************************************
+#
+# BE CAREFUL!
+#
+# Include default
+$include /etc/inputrc
+
+# vi style editing :D
+set editing-mode vi
+set keymap       vi
+
+# Bracketed paste protects the shell from immediately executing lines that
+# contain pasted CR's etc (see bash(1))
+set enable-bracketed-paste on
+
+# BASH only ^L == clear
+#$if Bash
+#"\C-l": "\e\C-la"
+#$endif
+Control-l:clear-screen
+#"\C-l":clear-screen
+# FIXME: WHY AM I USING THIS INSTEAD OF THE ABOVE?:
+"\C-l":"\e\C-la"
+"\C-r":re-read-init-file
+
+#"\C-j":menu-complete
+#"\C-k":menu-complete-backward
+
+#Control-j:menu-complete
+#Control-k:menu-complete-backward
+# ^j = RETURN so when we define the above, pressing ENTER whilst stdin isn't
+#      being read causes a menu-complete instead of a proper ENTER!
+Control-k:menu-complete
+TAB:complete
+#DOESN'T WORK???#Control-TAB:menu-complete
+
+# DEL key
+# ( from: http://st.suckless.org/ )
+# In the case of bash readline is used. Readline has a different
+# note in its manpage about this issue:
+#
+# enable-keypad (Off)
+#     When set to On, readline will try to enable the
+#     application keypad when it is called. Some systems
+#     need this to enable arrow keys.
+#
+# Adding this option to your .inputrc will fix the keypad problem for all applications using readline.
+set enable-keypad on

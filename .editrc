@@ -1,0 +1,10 @@
+# .editrc is used by editline(3), editrc(5)
+#
+# NOTE: There's also readline (.inputrc)
+#
+
+# Uses editline:
+#   MySQL
+
+# vi style editing :D
+bind -v
