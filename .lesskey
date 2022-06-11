@@ -126,7 +126,8 @@ v         visual
 !         shell
 +         firstcmd
 H         help
-h         help
+h         left-scroll
+l         right-scroll
 V         version
 0         digit
 1         digit
