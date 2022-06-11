@@ -115,5 +115,4 @@ EOF
 sleep 1
 
 # Finally, pull the files
-git --git-dir="${repo_path}" --work-tree="${HOME}" --ff-only pull
-
+git --git-dir="${repo_path}" --work-tree="${HOME}" pull --ff-only 
