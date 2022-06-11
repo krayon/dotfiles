@@ -118,6 +118,7 @@ sleep 1
 git --git-dir="${repo_path}" --work-tree="${HOME}" pull --ff-only
 
 # And restore DELETED files
+# (this is totally dangerous probably - we should be not crap here)
 while read -r line; do #{
     git --git-dir="${repo_path}" --work-tree="${HOME}" restore "${line}"
 done < <(\
