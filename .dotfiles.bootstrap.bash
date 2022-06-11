@@ -38,7 +38,7 @@ repo_path="$(realpath "${0%/*}")" || {
 }
 [ "${repo_path: -1:1}" != '/' ] && repo_path="${repo_path}/"
 
-[ "${repo_path}" == "${HOME}" ] && {
+[ "${repo_path}" == "${HOME}" ] || [ "${repo_path}" == "${HOME}/" ] && {
     echo "[1;33mINFO:[0;0m Repository seems to already be \${HOME}"
     exit 1
 }
