@@ -19,6 +19,13 @@ $include /etc/inputrc
 set editing-mode vi
 set keymap       vi
 
+# Defaults hard coded into bash (WTF)
+# https://github.com/gitGNU/gnu_bash/blob/bc007799f0e1362100375bb95d952d28de4c62fb/bashline.c#L566
+#   ESC-v: vi_edit_and_execute_command
+#   \:     bash completion?
+#   *:     bash completion?
+#   =:     bash completion: list all files that match
+
 # Bracketed paste protects the shell from immediately executing lines that
 # contain pasted CR's etc (see bash(1))
 set enable-bracketed-paste on
