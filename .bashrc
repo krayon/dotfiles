@@ -2,6 +2,12 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# SUPPORT FILES:
+#   .sh_set_path
+
+# Include PATH
+. ~/.sh_set_path 2>/dev/null
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;

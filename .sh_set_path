@@ -1,0 +1,74 @@
+# ~/.sh_set_path
+#     - Sets path for the system
+
+>&2 echo ".sh_set_path"
+
+# Check for shell ( when running dash from within bash, SHELL=/bin/bash :( )
+sh='sh'
+if [   `cat /proc/$$/comm` = "bash" ]; then
+    sh="bash"
+elif [ `cat /proc/$$/comm` = "dash" ]; then
+    sh="dash"
+fi
+
+# Device type
+DEVICE="pc"
+if [ "$HOST" = "squiddy"    ] \
+|| [ "$HOST" = "mrflibble"  ] \
+|| [ "$HOST" = "Nokia-N900" ] \
+; then #{
+    DEVICE="n900"
+fi #}
+
+
+
+prepath="$HOME/bin:/sbin:/usr/sbin"
+if [ -d "$HOME/bin.WORK" ]; then #{
+    prepath="$HOME/bin.WORK:$prepath"
+fi #}
+if [ -d "$HOME/bin.ARCH" ]; then #{
+    prepath="$HOME/bin.ARCH:$prepath"
+fi #}
+if [ -d "$HOME/bin.HOST" ]; then #{
+    prepath="$HOME/bin.HOST:$prepath"
+fi #}
+# DON'T NEED man PATH SET ANYMORE?
+#premanpath="$HOME/man.HOST:$HOME/man.ARCH:$workpath$HOME/man"
+
+
+
+# Is this bash?
+if [ "$sh" = "bash" ]; then #{
+    [ "${PATH:0:${#prepath}}" == "${prepath}" ] && prepath=""
+# DON'T NEED man PATH SET ANYMORE?
+#    [ "${MANPATH:0:${#premanpath}}" == "${premanpath}" ] && premanpath=""
+else #} {
+    # dash/sh can't do substrings, nor string length in shell
+    n_prepath=`echo "$prepath"|tr -d '\n'|wc -c`
+    preexist="`perl -e 'print substr("'"$PATH"'", 0, '$n_prepath')'`"
+    if [ "$prepath" = "$preexist" ]; then #{
+        prepath=""
+    fi #}
+
+# DON'T NEED man PATH SET ANYMORE?
+#    # dash/sh can't do substrings, nor string length in shell
+#    n_premanpath=`echo -n $premanpath|wc -c`
+#    preexist="`perl -e 'print substr("'"$MANPATH"'", 0, '$n_premanpath')'`"
+#    if [ "$premanpath" = "$preexist" ]; then #{
+#        premanpath=""
+#    fi #}
+fi #}
+
+if [ ! "x$prepath" = "x" ]; then #{
+    >&2 echo "Adding extra paths..."
+    export PATH=$prepath:$PATH
+    [ "$DEVICE" = "n900" ] && export PATH=$PATH:/usr/bin/gnu
+fi #}
+
+# DON'T NEED man PATH SET ANYMORE?
+#if [ ! "x$premanpath" = "x" ]; then #{
+#    >&2 echo "Adding extra (man)paths..."
+#    export MANPATH=$premanpath:$MANPATH
+#fi #}
+
+# vim:ts=4:tw=80:sw=4:et:ai:si
