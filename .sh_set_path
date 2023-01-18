@@ -13,12 +13,6 @@ fi
 
 # Device type
 DEVICE="pc"
-if [ "$HOST" = "squiddy"    ] \
-|| [ "$HOST" = "mrflibble"  ] \
-|| [ "$HOST" = "Nokia-N900" ] \
-; then #{
-    DEVICE="n900"
-fi #}
 
 
 
