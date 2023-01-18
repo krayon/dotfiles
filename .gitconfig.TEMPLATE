@@ -1,0 +1,80 @@
+# This is Git's per-user configuration file.
+# vim:ts=4:tw=80:sw=4:et:ai:si
+
+# User details
+[user]
+
+    name       = My Name
+    email      = my-name@my-domain.example.com
+    signingkey = MY-GPG-KEYS-SERIAL
+
+# Colour options
+[color]
+    ui         = auto
+    diff       = auto
+    status     = auto
+    branch     = auto
+
+[core]
+    editor     = vim
+    pager      = less -R
+
+[commit]
+    # -S
+    gpgSign    = true
+
+[diff]
+    tool       = vimdiff
+
+[log]
+    # Git doesn't honour LC_TIME ( WTF?! ) so we have to set date here to
+    # ISO 8601
+    #   https://git.github.io/rev_news/2015/07/08/edition-5/
+    #   http://thread.gmane.org/gmane.comp.version-control.git/272658
+    date       = iso
+
+[push]
+    # -S
+    gpgSign    = if-asked
+
+    # Push 'default' options:
+    #   nothing
+    #     Do not push anything.
+    #
+    #   matching
+    #     Push all matching branches.
+    #
+    #     All branches having the same name in both ends are considered to be
+    #     matching.
+    #
+    #     This is the default in Git 1.x.
+    #
+    #   upstream
+    #     Push the current branch to its upstream branch.
+    #
+    #   tracking
+    #     Deprecated synonym for upstream.
+    #
+    #   current
+    #     Push the current branch to a branch of the same name.
+    #
+    #   simple
+    #     (new in Git 1.7.11)
+    #     Like upstream, but refuses to push if the upstream branch's name is
+    #     different from the local one.
+    default    = simple
+
+[alias]
+    lg1-specific = log --graph       --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) - %C(dim white)%an%C(reset) %C(bold white)s:%G?%C(reset)%C(auto)%d%C(reset)'
+    lg1          = log --graph --all --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) - %C(dim white)%an%C(reset) %C(bold white)s:%G?%C(reset)%C(auto)%d%C(reset)'
+    lg           = log --graph --all --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) - %C(dim white)%an%C(reset) %C(bold white)s:%G?%C(reset)%C(auto)%d%C(reset)'
+    lg2-specific = log --graph       --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) - %C(dim white)%an%C(reset) %C(bold white)s:%G?%C(reset)'
+    lg2          = log --graph --all --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) - %C(dim white)%an%C(reset) %C(bold white)s:%G?%C(reset)'
+    lg3-specific = log --graph       --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cd)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          - %C(dim white)%an <%ae>%C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset) %C(bold white)(sig[%G?]: %GS)%C(reset)'
+    lg3          = log --graph --all --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold cyan)%ad%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cd)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          - %C(dim white)%an <%ae>%C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset) %C(bold white)(sig[%G?]: %GS)%C(reset)'
+
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
