@@ -1,0 +1,1 @@
+../EXTERNAL/ansible.vim--github--pearofducks/syntax/ansible_hosts.vim
