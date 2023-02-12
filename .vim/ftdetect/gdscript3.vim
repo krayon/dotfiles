@@ -1,0 +1,1 @@
+../EXTERNAL/gdscript3.vim--github--krayon/ftdetect/gdscript3.vim

@@ -1,0 +1,1 @@
+../EXTERNAL/gdscript3.vim--github--krayon/syntax/gsl.vim

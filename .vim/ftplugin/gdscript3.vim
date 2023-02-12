@@ -1,0 +1,1 @@
+../EXTERNAL/gdscript3.vim--github--krayon/ftplugin/gdscript3.vim
