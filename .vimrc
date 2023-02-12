@@ -151,6 +151,13 @@ nmap <silent> <leader>cd :lcd %:h<CR>
 " (yet) exist
 nmap <silent> <leader>md :!mkdir -p %:p:h<CR>
 
+" Map <leader>-p to do:
+"   - "_d == delete visually selected stuff to underscore register (gone baby)
+"   - P   == paste our register contents
+"   - If you don't do this, when you paste the replaced text gets put in the
+"     register
+xnoremap <leader>p "_dP
+
 
 
 hi StatusLine   ctermfg=Yellow ctermbg=Blue gui=bold term=bold cterm=bold guifg=Yellow guibg=Blue
