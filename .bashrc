@@ -117,3 +117,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# Include local host .bashrc
+[ -r ~/.bashrc.HOST ] && . ~/.bashrc.HOST
