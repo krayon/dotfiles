@@ -1,0 +1,1 @@
+../EXTERNAL/diffchar.vim--github--rickhowe/plugin/diffchar.vim
