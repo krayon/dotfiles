@@ -1,0 +1,1 @@
+../EXTERNAL/echofunc.vim--github--mbbill/after/plugin/echofunc.vim
