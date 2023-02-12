@@ -25,3 +25,8 @@ dotfiles status
 dotfiles add .vimrc
 dotfiles commit -S -m 'Added my vimrc'
 ```
+
+
+
+----
+[//]: # ( vim: set ts=4 sw=4 et cindent tw=80 ai si syn=markdown ft=markdown: )
