@@ -120,3 +120,9 @@ fi
 
 # Include local host .bashrc
 [ -r ~/.bashrc.HOST ] && . ~/.bashrc.HOST
+
+# Include general .bash_aliases
+[ -r ~/.bash_aliases ] && . ~/.bash_aliases
+
+# Include local host .bash_aliases
+[ -r ~/.bash_aliases.HOST ] && . ~/.bash_aliases.HOST
