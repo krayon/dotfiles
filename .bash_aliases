@@ -407,3 +407,34 @@ epoch() {
 # Performs rot13 ( try it twice for 2 x the security ;) )
 alias rot13='tr "[a-mn-zA-MN-Z]" "[n-za-mN-ZA-M]"'
 
+# Youtube-dl fork
+alias yt-dlp='yt-dlp --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"' --format mp4'
+
+yt-dlp-google-link() {
+    local vids=()
+    [ "$#" -gt 0 ] && {
+        while [ "$#" -gt 0 ]; do #{
+            local vid="$(
+                sed 's#^.*google.*www.youtube.com%2Fwatch%3Fv%3D##' <<<"$1"
+            )"
+            vids+=("${vid%%&*}")
+            >&2 echo "${vids[@]}"
+            shift 1
+        done #}
+
+        true
+    } || {
+        local url=''
+        while read -r url; do #{
+            local vid="$(
+                sed 's#^.*google.*www.youtube.com%2Fwatch%3Fv%3D##' <<<"$url"
+            )"
+            vids+=("${vid%%&*}")
+            >&2 echo "${vids[@]}"
+        done #}
+    }
+
+    yt-dlp ${vids[@]}
+    return $?
+}
+
