@@ -33,8 +33,10 @@ host in question.
 
 Each host can have a custom `bin` directory and bash extensions to the base.
 
-When `dotfiles.bootstrap.bash` is run, symlinks are created on the local system,
-pointing to it's `<HOSTNAME>` versions.
+When `.dotfiles.bootstrap.bash` is run, symlinks are created on the local
+system, pointing to it's `<HOSTNAME>` versions. You can also trigger the
+(re)creation of these at any time by running `.dotfiles.bootstrap.bash` with the
+`-s`/`--symlinks` option.
 
 ## bin
 
