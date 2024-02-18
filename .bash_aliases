@@ -377,6 +377,71 @@ chlike() {
     chmod --reference="${src}" "${@}"
 } # chlike()
 
+#function==============================================================
+# pwdd
+#======================================================================
+# Prints the name of the current working directory (WITHOUT it's path)
+#----------------------------------------------------------------------
+pwdd() {
+    local pwd
+    read -r pwd < <(pwd "${@}")
+    # Strip trailing '/'s
+    while [ "${pwd: -1:1}" == '/' ]; do #{
+        pwd="${pwd:0: -1}"
+    done #}
+    echo "${pwd##*/}"
+} # pwdd()
+
+#function==============================================================
+# unziptodir
+#======================================================================
+# Unzip, windows style (to a subdirectory)
+#----------------------------------------------------------------------
+unziptodir() {
+    local cmd param
+
+    type -P 7z &>/dev/null && {
+        cmd='7z'
+        param='x'
+    } || {
+        cmd='unzip'
+        param='-x'
+    }
+
+    while [ $# -gt 0 ]; do #{
+        local f="${1}"
+        local d="${f%.*}"
+        shift 1
+
+        mkdir "${d}" || {
+            >&2 echo "ERROR: Failed to mkdir ${d}"
+            continue
+        }
+
+        (cd "${d}"/ && "${cmd}" "${param}" ../"${f}")
+    done #}
+} # unziptodir()
+
+#function==============================================================
+# test_params
+#======================================================================
+# Outputs the parameters passed to it
+#----------------------------------------------------------------------
+# test_params [<PARAM1> [<PARAM2> [...]]]
+#----------------------------------------------------------------------
+test_params() {
+    echo -n "${#} parameter(s) passed"
+    [ "${#}" -lt 1 ] && echo && return 0
+    echo ':'
+    i=0
+    while [ "${#}" -gt 0 ]; do #{
+        i=$((i + 1))
+        printf "  %${##}d:|" "${i}"
+        echo "${1}|"
+        shift 1
+    done #}
+} # test_params()
+
 
 
 ############################################################
