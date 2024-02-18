@@ -71,6 +71,12 @@ endif
 "autocmd FileType c set omnifunc=ccomplete#Complete
 filetype plugin on
 
+" Make %% expand to the current file's parent directory
+cabbr <expr> %% expand('%:h')
+
+" Map <leader>gu to navigate to parent directory
+nmap <leader>gu :e %%
+
 " Show a lil' menu of function declarations when omni-completing
 " (<C-x>, <C-o>)
 " longest - ensures popup menu doesn't select the first completion item, but
