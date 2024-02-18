@@ -34,6 +34,10 @@ alias psax='ps ax'
 alias sudoa='sudo '
 alias forka='fork '
 
+# Kill current terminal (no history writing, immediate bailout)
+alias killme='kill -9 $$'
+alias km='kill -9 $$'
+
 # Use !!, it's quicker and easier
 ## sudo the last command typed
 #alias sudothat='echo "sudo $(fc -ln -1)" && sudo $(fc -ln -1)'
@@ -277,6 +281,34 @@ mkcd() {
 
     pwd
 } # mkcd()
+
+#function==============================================================
+# mkpushd
+#======================================================================
+# Makes a directory, then pushd's into it
+# (if more than one DIR specified, each is made and pushd'd into in order)
+#----------------------------------------------------------------------
+mkpushd() {
+    if [ ${#} -lt 1 ]; then #{
+        >&2 echo "Usage: mkpushd <DIR> [...]"
+        >&2 echo "(if more than one DIR specified, each is made and pushd'd into in order)"
+        return 1
+    fi #}
+
+    while [ ${#} -gt 0 ]; do #{
+        if [ -d "${1}" ]; then #{
+            >&2 echo "WARNING: Directory '${1}' exists..."
+        else #} {
+            mkdir -p "${1}"
+        fi #}
+
+        pushd "${1}"
+
+        shift 1
+    done #}
+
+    pwd
+} # mkpushd()
 
 #function==============================================================
 # cdclip
