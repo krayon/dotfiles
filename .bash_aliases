@@ -81,7 +81,7 @@ isset() {
 } # isset()
 
 #function==============================================================
-# isint
+# isint v0.9
 #======================================================================
 # Returns if the string(s) provided is an integer or not
 #----------------------------------------------------------------------
@@ -99,14 +99,15 @@ alias isnum='isint'
 isint() {
     [ $# -lt 1 ] && return 1
 
-    ret=0
+    local ret=0
     while [ $# -gt 0 ]; do #{
+        local num="${1#}"
         # Ensure param is an integer
         #[ "${1}" -eq "${1}" ] 2>/dev/null
         # shellcheck disable=SC2003 # expr returns error here which we want
-        expr "${1}" + 1 &>/dev/null || {
+        expr "${num}" + 1 &>/dev/null || {
             # Invalid integer
-            >&2 echo "WARNING: Invalid integer: ${1}"
+            >&2 echo "WARNING: Invalid integer: ${num}"
             ret=1
             shift 1
             continue
@@ -189,7 +190,7 @@ cdd() {
     [ -z "${1}" ] && return
 
     [ ${#} -gt 1 ] && {
-        >&2 echo "ERROR: Too many parameter(s):" "${@}"
+        >&2 echo "ERROR: Too many parameter(s): " "${@}"
         return 1
     }
 
@@ -200,15 +201,15 @@ cdd() {
         num="$((${#1} - 1))"
     }
 
-    [ -z "${num}" ] && {
-        num="$(printf '%d' "${1}" 2>/dev/null)" || {
-            >&2 echo "ERROR: NaN: Parameter 'num' not an integer: ${1}"
-            return 1
-        }
-    }
+    [ -z "${num}" ] && num="${1}"
 
     [ -z "${num}" ] && {
-        >&2 echo "ERROR: Invalid parameter(s): " "${@}"
+        >&2 echo "ERROR: Too few parameter(s): " "${@}"
+        return 1
+    }
+
+    isint "${num}" || {
+        >&2 echo "ERROR: Parameter not periods (.) or an integer: ${num}"
         return 1
     }
 
@@ -251,6 +252,7 @@ cdf() {
 # mkcd
 #======================================================================
 # Makes a directory, then cd's into it
+# (if more than one DIR specified, CD to last)
 #----------------------------------------------------------------------
 mkcd() {
     if [ ${#} -lt 1 ]; then #{
