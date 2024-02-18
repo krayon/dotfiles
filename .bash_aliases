@@ -4,7 +4,7 @@
 # vim:set ts=4 sw=4 tw=80 et ai si cindent cino=L0,b1,(1s,U1,m1,j1,J1,)50,*90 cinkeys=0{,0},0),0],\:,0#,!^F,o,O,e,0=break:
 
 # Are we being run?
-[ "${0}" == "${BASH_SOURCE}" ] && {
+[ "${0}" == "${BASH_SOURCE[0]}" ] && {
     # Oh HELL no
     >&2 echo "ERROR: Non-executable, source file instead"
     exit 1
@@ -57,7 +57,7 @@ alias closestderr='exec 2>&-'
 #   <ret_val> = if <ret_val> is set
 #----------------------------------------------------------------------
 set_return() {
-    return ${1:-0}
+    return "${1:-0}"
 } # set_return()
 
 #function==============================================================
@@ -77,7 +77,7 @@ set_return() {
 isset() {
     [ $# -ne 1 ] && return 1
 
-    return $(declare -p "${1}" &>/dev/null)
+    declare -p "${1}" &>/dev/null
 } # isset()
 
 #function==============================================================
@@ -95,7 +95,7 @@ isset() {
 #   1 = (PARTIAL) FAILURE: NOT an integer
 #       (or no <STRING> provided)
 #----------------------------------------------------------------------
-alias isint='isnum'
+alias isnum='isint'
 isint() {
     [ $# -lt 1 ] && return 1
 
@@ -103,7 +103,8 @@ isint() {
     while [ $# -gt 0 ]; do #{
         # Ensure param is an integer
         #[ "${1}" -eq "${1}" ] 2>/dev/null
-        expr "${1}" + 0 &>/dev/null || {
+        # shellcheck disable=SC2003 # expr returns error here which we want
+        expr "${1}" + 1 &>/dev/null || {
             # Invalid integer
             >&2 echo "WARNING: Invalid integer: ${1}"
             ret=1
@@ -114,7 +115,7 @@ isint() {
         shift 1
     done #}
 
-    return 0
+    return ${ret}
 } # isint()
 
 #function==============================================================
@@ -132,13 +133,17 @@ isint() {
 #       (or no <STRING> provided)
 #----------------------------------------------------------------------
 isfloat() {
+    local prec=''
+    local fl=''
+
     [ $# -lt 1 ] && return 1
 
     ret=0
     while [ $# -gt 0 ]; do #{
         # Ensure param is a float
-        local prec="${1#*.}"; [ "${prec}" == "${1}" ] && prec=0 || prec="${#prec}"
-        local fl="$(printf "%.${prec}f" "${1}" 2>/dev/null)$([ "${1: -1}" == '.' ] && echo '.')" && [ "${fl}" == "${1}" ] || {
+        prec="${1#*.}"; [ "${prec}" == "${1}" ] && prec=0 || prec="${#prec}"
+        # shellcheck disable=SC2015 # Useless warning - this is not an if-then-else
+        fl="$(printf "%.${prec}f" "${1}" 2>/dev/null)$([ "${1: -1}" == '.' ] && echo '.')" && [ "${fl}" == "${1}" ] || {
             # Invalid float
             >&2 echo "WARNING: Invalid float: ${1}"
             ret=1
@@ -184,7 +189,7 @@ cdd() {
     [ -z "${1}" ] && return
 
     [ ${#} -gt 1 ] && {
-        >&2 echo "ERROR: Too many parameter(s): ${@}"
+        >&2 echo "ERROR: Too many parameter(s):" "${@}"
         return 1
     }
 
@@ -203,7 +208,7 @@ cdd() {
     }
 
     [ -z "${num}" ] && {
-        >&2 echo "ERROR: Invalid parameter(s): ${@}"
+        >&2 echo "ERROR: Invalid parameter(s): " "${@}"
         return 1
     }
 
@@ -215,6 +220,7 @@ cdd() {
     dirs="${dirs:1}"
 
     # Finally, cd but change each '0' to '../'
+    # shellcheck disable=SC2164 # We want this to fall through
     cd "${dirs//0/..\/}"
 } # cdd()
 
@@ -231,13 +237,14 @@ cdf() {
 
     # Exists and is directory
     [ -d "${1}" ] && {
+        # shellcheck disable=SC2164 # We want this to fall through
         cd "${1}"
         return $?
     }
 
     # File I guess, CD to it's parent
+    # shellcheck disable=SC2164 # We want this to fall through
     cd "${1%/*}"
-    return $?
 } # cdf()
 
 #function==============================================================
@@ -259,7 +266,9 @@ mkcd() {
             mkdir -p "${1}"
         fi #}
 
-        [ ${#} -eq 1 ] && cd "${1}"
+        [ ${#} -eq 1 ] && {
+            cd "${1}" || return $?
+        }
 
         shift 1
     done #}
@@ -282,22 +291,24 @@ cdclip() {
     }
 
     clip_c="$(xclip -o -selection clipboard)" && {
-        [ $(wc -l < <(echo -n "${clip_p}")) -gt $(wc -l < <(echo -n "${clip_c}")) ] && {
+        if [ "$(wc -l < <(echo -n "${clip_p}"))" -gt "$(wc -l < <(echo -n "${clip_c}"))" ]; then #{
             dirs=("${clip_c}" "${dirs[@]}")
-        } || {
+        else #} {
             dirs+=("${clip_c}")
-        }
+        fi #}
     }
 
     for d in "${dirs[@]}"; do #{
         # Exists and is directory
         [ -d "${d}" ] && {
+            # shellcheck disable=SC2164 # We want this to fall through
             cd "${d}"
             return $?
         }
 
         # Exists but not a directory? Assume file, CD to it's parent
         [ -e "${d}" ] && {
+            # shellcheck disable=SC2164 # We want this to fall through
             cd "${d%/*}"
             return $?
         }
@@ -389,7 +400,7 @@ epoch() {
     local n="${d:10}"
     [ -n "${n}" ] && n=".${n}"
 
-    d="$(date -u -Iseconds -d @${d:0:10})"
+    d="$(date -u -Iseconds -d "@${d:0:10}")"
 
     # Strip ISO 8601 timezone data
     d="${d:0: -6}"
@@ -411,10 +422,11 @@ alias rot13='tr "[a-mn-zA-MN-Z]" "[n-za-mN-ZA-M]"'
 alias yt-dlp='yt-dlp --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"' --format mp4'
 
 yt-dlp-google-link() {
+    local vid=''
     local vids=()
-    [ "$#" -gt 0 ] && {
+    if [ "$#" -gt 0 ]; then #{
         while [ "$#" -gt 0 ]; do #{
-            local vid="$(
+            vid="$(
                 sed 's#^.*google.*www.youtube.com%2Fwatch%3Fv%3D##' <<<"$1"
             )"
             vids+=("${vid%%&*}")
@@ -423,18 +435,18 @@ yt-dlp-google-link() {
         done #}
 
         true
-    } || {
+    else #} {
         local url=''
         while read -r url; do #{
-            local vid="$(
+            vid="$(
                 sed 's#^.*google.*www.youtube.com%2Fwatch%3Fv%3D##' <<<"$url"
             )"
             vids+=("${vid%%&*}")
             >&2 echo "${vids[@]}"
         done #}
-    }
+    fi #}
 
-    yt-dlp ${vids[@]}
+    yt-dlp "${vids[@]}"
     return $?
 }
 
