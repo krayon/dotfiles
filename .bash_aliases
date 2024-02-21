@@ -25,7 +25,7 @@ alias psax='ps ax'
 
 
 ############################################################
-# Shell
+# Shell Basics
 ############################################################
 
 # The greatest thing EVER! Because alias get's expanded out first, the end
@@ -83,6 +83,32 @@ isset() {
 
     declare -p "${1}" &>/dev/null
 } # isset()
+
+#function==============================================================
+# test_params
+#======================================================================
+# Outputs the parameters passed to it
+#----------------------------------------------------------------------
+# test_params [<PARAM1> [<PARAM2> [...]]]
+#----------------------------------------------------------------------
+test_params() {
+    echo -n "${#} parameter(s) passed"
+    [ "${#}" -lt 1 ] && echo && return 0
+    echo ':'
+    i=0
+    while [ "${#}" -gt 0 ]; do #{
+        i=$((i + 1))
+        printf "  %${##}d:|" "${i}"
+        echo "${1}|"
+        shift 1
+    done #}
+} # test_params()
+
+
+
+############################################################
+# Number processing
+############################################################
 
 #function==============================================================
 # isint v0.9
@@ -161,6 +187,28 @@ isfloat() {
 
     return 0
 } # isfloat()
+
+
+
+############################################################
+# String processing
+############################################################
+
+# Performs rot13 ( try it twice for 2 x the security ;) )
+alias rot13='tr "[a-mn-zA-MN-Z]" "[n-za-mN-ZA-M]"'
+
+alias       utf82ascii='iconv -f  utf8 -t ASCII'
+alias      utf162ascii='iconv -f utf16 -t ASCII'
+alias  utf82iso-8859-1='iconv -f  utf8 -t ISO_8859-1'
+alias utf162iso-8859-1='iconv -f utf16 -t ISO_8859-1'
+alias       ascii2utf8='iconv -f ASCII -t  utf8'
+alias      ascii2utf16='iconv -f ASCII -t utf16'
+
+
+
+############################################################
+# Shell Navigation and Filesystem Actions
+############################################################
 
 #function==============================================================
 # cdd, cd.., cd... etc
@@ -422,26 +470,6 @@ unziptodir() {
     done #}
 } # unziptodir()
 
-#function==============================================================
-# test_params
-#======================================================================
-# Outputs the parameters passed to it
-#----------------------------------------------------------------------
-# test_params [<PARAM1> [<PARAM2> [...]]]
-#----------------------------------------------------------------------
-test_params() {
-    echo -n "${#} parameter(s) passed"
-    [ "${#}" -lt 1 ] && echo && return 0
-    echo ':'
-    i=0
-    while [ "${#}" -gt 0 ]; do #{
-        i=$((i + 1))
-        printf "  %${##}d:|" "${i}"
-        echo "${1}|"
-        shift 1
-    done #}
-} # test_params()
-
 
 
 ############################################################
@@ -511,11 +539,19 @@ epoch() {
 
 
 ############################################################
-# String manipulation
+# SSH
 ############################################################
 
-# Performs rot13 ( try it twice for 2 x the security ;) )
-alias rot13='tr "[a-mn-zA-MN-Z]" "[n-za-mN-ZA-M]"'
+alias ssh-key-fingerprint='ssh-keygen -lf'
+alias ssh-key-fingerprint-md5='ssh-keygen -E md5 -lf'
+
+alias ssh-nohostcheck='ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no"'
+
+
+
+############################################################
+# Misc
+############################################################
 
 # Youtube-dl fork
 alias yt-dlp='yt-dlp --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"' --format mp4'
