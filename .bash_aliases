@@ -204,7 +204,9 @@ alias utf162iso-8859-1='iconv -f utf16 -t ISO_8859-1'
 alias       ascii2utf8='iconv -f ASCII -t  utf8'
 alias      ascii2utf16='iconv -f ASCII -t utf16'
 
-
+# Undo what fold does
+alias fold_undo='dlof'
+alias dlof='sed -e '"'"':g;N;s/\n\([^\n ]\)/ \1/;tg;p;d'"'"
 
 ############################################################
 # Shell Navigation and Filesystem Actions
@@ -491,7 +493,11 @@ alias tsh='timestamph'
 alias tsd='timestampd'
 alias tse='timestampe'
 alias daterfc3339='date --rfc-3339="seconds"'
+alias daterfc3339z='date -u --rfc-3339="seconds"'
+alias dateiso8601='date --iso-8601="seconds"'
+alias dateiso8601z='date -u --iso-8601="seconds"'
 alias day='date +%A'
+alias datecmdsetformat='date +%m%d%H%M%Y.%S'
 
 #function==============================================================
 # epoch
@@ -534,7 +540,7 @@ epoch() {
 
     # Strip ISO 8601 'T' between date and time and add 'UTC'
     echo "${d/T/ }${n} UTC"
-}
+} # epoch()
 
 
 
