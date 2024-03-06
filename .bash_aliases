@@ -208,6 +208,35 @@ alias      ascii2utf16='iconv -f ASCII -t utf16'
 alias fold_undo='dlof'
 alias dlof='sed -e '"'"':g;N;s/\n\([^\n ]\)/ \1/;tg;p;d'"'"
 
+# Pad a base32 string to make it standards compliant
+base32pad() {
+    local line pad
+
+    while read -r line; do #{
+        # Pad base32 secret if needed
+        pad="$(( 10 ** $(( (8 - (${#line} % 8)) % 8 )) ))"
+        pad="$(tr '0' '=' <<<"${pad:1}")"
+        echo "${line}${pad}"
+    done < <(
+        # Explicitly stdin
+        [ ${#} -eq 1 ] && [ "${1}" == '-' ] && shift 1
+
+        # Command line supplied
+        [ ${#} -gt 0 ] && {
+            while [ ${#} -gt 0 ]; do #{
+                echo "${1}"
+                shift 1
+            done #}
+            return $?
+        }
+
+        # Implicitly stdin
+        cat
+    )
+}
+
+
+
 ############################################################
 # Shell Navigation and Filesystem Actions
 ############################################################
