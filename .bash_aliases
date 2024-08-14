@@ -268,6 +268,11 @@ alias cd...='cdd 2'
 alias cd....='cdd 3'
 alias cd.....='cdd 4'
 alias cd......='cdd 5'
+alias ..='cdd 1'
+alias ...='cdd 2'
+alias ....='cdd 3'
+alias .....='cdd 4'
+alias ......='cdd 5'
 cdd() {
     # Blank parameter
     [ -z "${1}" ] && return
