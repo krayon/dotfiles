@@ -24,6 +24,29 @@ esac
     _col_no=1
 }
 
+# Input (key binds)
+[ -r "${HOME}/.inputrc" ] && {
+    # Parse inputrc ourselves
+
+    # Skip:
+    #   - empty lines
+    #   - comments
+    #   - includes (TODO)
+    #   - set commands
+    while read -r line; do #{
+        [ -z "${line}" ]\
+        || [ "${line:0:1}" == '#'        ]\
+        || [ "${line:0:8}" == '$include' ]\
+        || [ "${line:0:4}" == 'set '     ]\
+        && continue
+
+        # At this point, we _assume_ the rest of the lines are binds
+        bind "${line}"
+    done < <(sed 's#^[ \t]*##;s#[ \t]*$##' <"${HOME}/.inputrc") #}
+}
+
+
+
 ##############################################################################{
 # BASH HISTORY
 #-----------------------------------------------------------------------------
