@@ -8,11 +8,21 @@
 # Include PATH
 . ~/.sh_set_path 2>/dev/null
 
+# For each PATH, man adds PATH/../man/ to the MANPATH so this is unnecessary :D
+#     UPDATE 20201001: Not any more? Now we set it in .sh_set_path though so yeah...
+#     UPDATE 20201002: OK so it's now PATH/man/ ... so: bin.ARCH/man/man1/a.1
+#export MANPATH=${MANPATH}:~/man
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
       *) return;;
 esac
+
+# Add colours
+. ~/.colours || {
+    _col_no=1
+}
 
 ##############################################################################{
 # BASH HISTORY
