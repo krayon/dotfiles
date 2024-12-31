@@ -138,29 +138,27 @@ col[fg-white]="\033[${_col[fg-white]}m"
 #   Key if valid
 _colour_validate() {
 #>&2 echo "_colour_validate '${type}' '${val}'"
-    local type="${1}" val="${1}"
+    local type val
+
+    type="${1}"; shift 1
+    val="${1}"; shift 1
 
     local k=0
     #local test_col="\033[${val}m"
 
-    for k in "${_col[@]}"; do #{
-        [ "${k:0:3}" != "${type}-" ] && continue
-
-        [ "${_col[${k}]}" == "${val}" ] && {
-            # Valid colour
-            echo "${k}"
-            return 0
-        }
-
-        [ "${col[${k}]}" == "${val}" ] && {
-            # Valid colour
-            echo "${k}"
-            return 0
-        }
-    done #}
+    [ -n "${col[${type}-${val}]}" ] && {
+        echo "${type}-${val}"
+        return 0
+    }
 
     # Invalid Colour
     return 1
+}
+
+# List all colours
+colours() {
+    echo "Supported colours by the colour command:"
+    sed 's# #\n  - #g;s#^#  - #' <<<"${!_col[@]}"|sort
 }
 
 # Set the colour
