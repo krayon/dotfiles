@@ -145,8 +145,13 @@ shoptpop() {
         shoptsu="$(sed -n 's#^.*\(-u.*\)$#\1#p'   <<<"${_shoptpstack[-1]}")"
         unset '_shoptpstack[-1]'
 
-        [ ! -z "${shoptss}" ] && shopt ${shoptss}
-        [ ! -z "${shoptsu}" ] && shopt ${shoptsu}
+        # SC2086 (info): Double quote to prevent globbing and word splitting.
+        # We want these expanded as each shopt is a single parameter and these
+        # variables contain the '-s'/'-u' flag and the parameters all in one.
+        # shellcheck disable=SC2086 # We want these expanded
+        [ -n "${shoptss}" ] && shopt ${shoptss}
+        # shellcheck disable=SC2086 # We want these expanded
+        [ -n "${shoptsu}" ] && shopt ${shoptsu}
     }
 }
 
@@ -498,7 +503,10 @@ mkpushd() {
             mkdir -p "${1}"
         fi #}
 
-        pushd "${1}"
+        pushd "${1}" || {
+            echo "ERROR: Failed to pushd to '${1}'"
+            return 1
+        }
 
         shift 1
     done #}
@@ -596,13 +604,13 @@ pwdd() {
 unziptodir() {
     local cmd param
 
-    type -P 7z &>/dev/null && {
+    if type -P 7z &>/dev/null; then #{
         cmd='7z'
         param='x'
-    } || {
+    else #} {
         cmd='unzip'
         param='-x'
-    }
+    fi #}
 
     while [ $# -gt 0 ]; do #{
         local f="${1}"
@@ -719,9 +727,8 @@ yt-dlp-google-link() {
     local vids=()
     if [ "$#" -gt 0 ]; then #{
         while [ "$#" -gt 0 ]; do #{
-            vid="$(
-                sed 's#^.*google.*www.youtube.com%2Fwatch%3Fv%3D##' <<<"$1"
-            )"
+            vid="${1/#*google.com*www.youtube.com\/watch\?v=/}"
+            vid="${vid/#*google.com*www.youtube.com%3Fwatch%3Fv%3D/}"
             vids+=("${vid%%&*}")
             >&2 echo "${vids[@]}"
             shift 1
@@ -731,9 +738,8 @@ yt-dlp-google-link() {
     else #} {
         local url=''
         while read -r url; do #{
-            vid="$(
-                sed 's#^.*google.*www.youtube.com%2Fwatch%3Fv%3D##' <<<"$url"
-            )"
+            vid="${url/#*google.com*www.youtube.com\/watch\?v=/}"
+            vid="${vid/#*google.com*www.youtube.com%3Fwatch%3Fv%3D/}"
             vids+=("${vid%%&*}")
             >&2 echo "${vids[@]}"
         done #}
