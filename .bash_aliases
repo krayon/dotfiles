@@ -374,6 +374,7 @@ base32pad() {
 #   0 = SUCCESS
 #   1 = FAILURE
 #----------------------------------------------------------------------
+alias cd.='cdd 0'
 alias cd..='cdd 1'
 alias cd...='cdd 2'
 alias cd....='cdd 3'
