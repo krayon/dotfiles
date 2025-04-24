@@ -54,6 +54,104 @@ alias closestdin='exec 0>&-'
 alias closestdout='exec 1>&-'
 alias closestderr='exec 2>&-'
 
+# Bash caches executable locations
+# you should enable 'shopt -s checkhash'
+alias path_cmd_cache_del='hash -d'
+alias path_cmd_cache_del_all='hash -r'
+
+#======================================================================
+# shopt push/pop functionality
+#======================================================================
+
+declare -a _shoptpstack
+
+#function==============================================================
+# shoptprint
+#======================================================================
+# Prints shell options (`shopt`) on the shopt stack (_shoptpstack)
+#----------------------------------------------------------------------
+# shoptprint
+#----------------------------------------------------------------------
+# Outputs:
+#   Current shopt stack
+# Returns:
+#   0 = shopts popped
+#   1 = shopt stack empty
+#----------------------------------------------------------------------
+shoptprint() {
+    local f
+    local i
+
+    f="${FUNCNAME[0]}"
+    [ "${FUNCNAME[1]}" != "source" ] && f="${FUNCNAME[1]}"
+
+    [ ${#_shoptpstack[@]} -lt 1 ] && {
+        >&2 echo "FAILED: ${f}: shopt stack empty"
+        return 1
+    }
+
+    for i in $(seq $(( ${#_shoptpstack[@]} - 1 )) -1 0); do #{
+        echo "shopt ${_shoptpstack[i]}"
+    done #}
+}
+
+#function==============================================================
+# shoptpush
+#======================================================================
+# Pushs the current shell options (`shopt`) onto the shopt stack (_shoptpstack)
+#
+# If no options are specified, pushes all shell options
+#----------------------------------------------------------------------
+# shoptpush [<shopt> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   Current shopt stack
+# Returns:
+#   0 = shopts popped
+#   1 = shopt stack empty
+#----------------------------------------------------------------------
+shoptpush() {
+    _shoptpstack+=("$(\
+        shopt -p "${@}"\
+            |sort\
+            |sed 's#^shopt ##'\
+            |tr '\n' ' '\
+            |sed 's#\(.\) -s #\1 #g;s# -u#&&#;s# -u # #g'\
+    )")
+
+    shoptprint
+}
+
+#function==============================================================
+# shoptpop
+#======================================================================
+# Pops shell options (`shopt`) off the shopt stack (_shoptpstack)
+#----------------------------------------------------------------------
+# shoptpop
+#----------------------------------------------------------------------
+# Outputs:
+#   Current shopt stack
+# Returns:
+#   0 = shopts popped
+#   1 = shopt stack empty
+#----------------------------------------------------------------------
+shoptpop() {
+    local shoptss shoptsu
+
+    shoptprint
+
+    [ ${#_shoptpstack[@]} -ge 1 ] && {
+        shoptss="$(sed -n 's#^\(-s.*\)-u.*$#\1#p' <<<"${_shoptpstack[-1]}")"
+        shoptsu="$(sed -n 's#^.*\(-u.*\)$#\1#p'   <<<"${_shoptpstack[-1]}")"
+        unset '_shoptpstack[-1]'
+
+        [ ! -z "${shoptss}" ] && shopt ${shoptss}
+        [ ! -z "${shoptsu}" ] && shopt ${shoptsu}
+    }
+}
+
+
+
 #function==============================================================
 # set_return
 #======================================================================
