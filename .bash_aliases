@@ -720,7 +720,14 @@ alias ssh-nohostcheck='ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyCh
 #-----------------------------------------------------------------------------
 
 # Youtube-dl fork
-alias yt-dlp='yt-dlp --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"' --format mp4'
+alias yt-dlp='yt-dlp                --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"' --format '"'"'bestvideo*[height=768]+bestaudio/bestvideo*[height=720]+ba/bestvideo*[height=1080]+ba/bv+ba/best'"'"
+alias yt-dlp-768='yt-dlp'
+alias yt-dlp-1080='yt-dlp                                                                                    --format '"'"'bv*[height=1080]+ba/bv*[height=768]+ba/bv*[height=720]+ba/bv+ba/best'"'"
+alias yt-dlp-best='yt-dlp                                                                                    --format '"'"'bv+ba/best/bv*[height=1080]+ba/bv*[height=768]+ba/bv*[height=720]+ba'"'"
+alias yt-dlp-mp4='yt-dlp                                                                                     --format mp4'
+alias yt-dlp-playlist='yt-dlp       --output '"'"'%(playlist_title)s.%(playlist_index)s.%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"
+alias yt-dlp-playlist-date='yt-dlp  --output '"'"'%(playlist_title)s.%(release_date,upload_date)s.%(title)s.%(playlist_index)s.%(id)s.%(ext)s'"'"
+alias yt-dlp-playlist-index='yt-dlp --output '"'"'%(playlist_title)s.%(playlist_index)s.%(title)s.%(id)s.%(ext)s'"'"
 
 yt-dlp-google-link() {
     local vid=''
@@ -745,7 +752,7 @@ yt-dlp-google-link() {
         done #}
     fi #}
 
-    yt-dlp "${vids[@]}"
+    yt-dlp -- "${vids[@]}"
     return $?
 }
 
