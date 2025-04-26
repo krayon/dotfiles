@@ -614,6 +614,220 @@ trim() {
     return 0
 } # trim()
 
+#function==============================================================
+# chr
+#======================================================================
+# Gets an ASCII representation of a provided number
+#----------------------------------------------------------------------
+# chr <NUMBER> [<NUMBER> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   The ASCII character(s) of the provided <NUMBER>(s).
+# Returns:
+#   0 = Success
+#   1 = (PARTIAL) FAILURE ((a) <NUMBER> is not within range (0 - 255))
+#       (or no <STRING> provided)
+#----------------------------------------------------------------------
+chr() {
+    local ret output
+
+    # local is the default for declare unless -g is used
+    declare -a a_chrs
+
+    [ $# -lt 1 ] && return 1
+
+    ret=0
+
+    while [ $# -gt 0 ]; do #{
+        isint "${1}" 2>/dev/null || {
+            >&2 echo "WARNING: <NUMBER> not a number, ignoring: ${1}"
+            ret=1
+            shift 1
+            continue
+        }
+
+        # shellcheck disable=SC2015 # Useless warning - this is not an if-then-else
+        [ "${1}" -gt -1 ] && [ "$1" -lt 256 ] || {
+            # Out of bounds (< 0 || > 255)
+            >&2 echo "WARNING: <NUMBER> out of bounds, ignoring: ${1}"
+            ret=1
+            shift 1
+            continue
+        }
+
+        a_chrs+=("$((${1} + 0))")
+        shift 1
+    done #}
+
+    output="$(printf '\\%04o' "${a_chrs[@]}")"; r=$?
+    [ "${r}" -ne 0 ] && ret=${r}
+    echo -e "${output}"
+
+    return ${ret}
+} # chr()
+
+#function==============================================================
+# ord
+#======================================================================
+# Gets the ASCII value of a provided character
+#----------------------------------------------------------------------
+# ord <CHAR> [<CHAR> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   The ASCII value(s) of the provided <CHAR>(s).
+# Returns:
+#   0 = SUCCESS
+#   1 = (PARTIAL) FAILURE
+#       (or no <CHAR> provided)
+#----------------------------------------------------------------------
+ord() {
+    [ $# -lt 1 ] && return 1
+
+    ret=0
+    while [ $# -gt 0 ]; do #{
+        LC_CTYPE=C printf '%d' "'$1"; r=$?
+        [ "${r}" -ne 0 ] && ret=${r}
+        shift 1
+    done #}
+
+    return ${ret}
+} # ord()
+
+#function==============================================================
+# dec2bin
+#======================================================================
+# Array of binary strings, equal to their decimal keys
+#----------------------------------------------------------------------
+# ${dec2bin[<NUM>]}
+# dec2bin <NUM> [<NUM> [...]]
+# ${num2bin[<NUM>]}
+# num2bin <NUM> [<NUM> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   The string of 0/1's that is the binary number equating to the
+#   provided <NUM>.
+# Returns:
+#   0
+#----------------------------------------------------------------------
+dec2bin=({0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
+# shellcheck disable=SC2034 # Here to be used directly
+num2bin=({0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
+alias num2bin='dec2bin'
+dec2bin() {
+    local output
+
+    [ $# -lt 1 ] && return 1
+
+    while [ $# -gt 0 ]; do #{
+        output+="${dec2bin[$1]} "
+        shift 1
+    done #}
+
+    echo "${output:0: -1}"
+} # dec2bin()
+
+#function==============================================================
+# dec2oct
+#======================================================================
+# Returns an octal number of a provided number
+#----------------------------------------------------------------------
+# dec2oct <NUM> [<NUM> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   The octal value equating to the provided <NUM>(s).
+# Returns:
+#   0 = SUCCESS
+#   1 = (PARTIAL) FAILURE
+#       (or no <NUM> provided)
+#----------------------------------------------------------------------
+dec2oct() {
+    local ret num val output output
+
+    [ $# -lt 1 ] && return 1
+
+    ret=0
+
+    while [ $# -gt 0 ]; do #{
+        # Ensure param is a number
+        isint "${1}" || {
+            >&2 echo "WARNING: Not a number: ${1}"
+            ret=1
+            shift 1
+            continue
+        }
+        num=$((${1} + 0))
+
+        output=""
+        mul=1
+        val="${num}"
+
+        while [ "${val}" -ge 8 ]; do #{
+            output="$((val % 8))${output}"
+
+            val=$((num / (8 ** mul)))
+            [ ${val} -lt 8 ] && break
+
+            mul=$((mul + 1))
+        done #}
+
+        echo "${val}${output}"
+
+        shift 1
+    done #}
+
+    return ${ret}
+} # dec2oct()
+
+#function==============================================================
+# dec2ascii
+#======================================================================
+# Converts a set of decimal numbers, into their ASCII counterparts
+#----------------------------------------------------------------------
+# dec2ascii <dec_num> [<dec_num> [...]]
+# echo "<dec_num> [<dec_num> [...]]"|dec2ascii
+#----------------------------------------------------------------------
+# Outputs:
+#   The ASCII string of characters
+# Returns:
+#   0 = SUCCESS
+#   1 = (PARTIAL) FAILURE
+#       (or no <dec_num>'s provided)
+#----------------------------------------------------------------------
+dec2ascii() {
+    local ret line
+
+    # local is the default for declare unless -g is used
+    declare -a a_line
+
+
+    ret=0
+
+    [ "${1}" == "--help" ] || [ "${1}" == "-h" ] && {
+cat <<EOF
+dec2ascii
+
+Converts a set of decimal numbers, into their ASCII counterparts
+
+Usage:  dec2ascii <dec_num> [<dec_num> [...]]"
+        echo \"<dec_num> [<dec_num> [...]]\"|dec2ascii
+
+    <dec_num>    - A decimal number (between 0 - 255)
+EOF
+        return 0
+    }
+
+    [ ${#} -eq 0 ] && {
+        while read -r line; do #{
+            readarray -d ' ' -t a_line < <(echo -n "${line}")
+            dec2ascii "${a_line[@]}" || ret=$?
+        done #}
+
+        return ${ret}
+    }
+
+    printf '%b\n' "$(printf "\\\\x%x" "${@}")"
+} # dec2ascii()
+
 # Pad a base32 string to make it standards compliant
 base32pad() {
     local line pad
