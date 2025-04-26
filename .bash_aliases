@@ -518,6 +518,102 @@ EOF
     echo "${padl}${str}${padr}"
 } # strpad()
 
+#function==============================================================
+# ltrim
+#======================================================================
+# Trims string(s)/line(s) of leading whitespace (spaces and tabs specifically)
+#----------------------------------------------------------------------
+# ltrim <STRING> [<STRING> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   The input string(s) with the leading whitespace (spaces and tabs) removed.
+# Returns:
+#   0
+#----------------------------------------------------------------------
+ltrim() {
+    local line extglob
+
+    extglob="$(shopt -p|grep extglob$)"
+    shopt -s extglob
+
+    [ ${#} -gt 0 ] && {
+        for line in "${@}"; do #{
+            echo "${line##*([ $'\t'])}"
+        done #}
+        ${extglob}
+        return 0
+    }
+
+    while read -r line; do #{
+#>&2 echo "FIRST: |${line}|"
+        echo "${line##*([ $'\t'])}"
+    done #}
+    ${extglob}
+    return 0
+} # ltrim()
+
+#function==============================================================
+# rtrim
+#======================================================================
+# Trims string(s)/line(s) of trailing whitespace (spaces and tabs specifically)
+#----------------------------------------------------------------------
+# rtrim <STRING> [<STRING> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   The input string(s) with the trailing whitespace (spaces and tabs) removed.
+# Returns:
+#   0
+#----------------------------------------------------------------------
+rtrim() {
+    local line extglob
+
+    extglob="$(shopt -p|grep extglob$)"
+    shopt -s extglob
+
+    [ ${#} -gt 0 ] && {
+        for line in "${@}"; do #{
+            echo "${line%%*([ $'\t'])}"
+        done #}
+        ${extglob}
+        return 0
+    }
+
+    while read -r line; do #{
+#>&2 echo "FIRST: |${line}|"
+        echo "${line%%*([ $'\t'])}"
+    done #}
+    ${extglob}
+    return 0
+} # rtrim()
+
+#function==============================================================
+# trim
+#======================================================================
+# Trims string(s)/line(s) of whitespace (spaces and tabs specifically)
+#----------------------------------------------------------------------
+# trim <STRING> [<STRING> [...]]
+#----------------------------------------------------------------------
+# Outputs:
+#   The input string(s) with the leading and trailing whitespace (spaces and
+#   tabs) removed.
+# Returns:
+#   0
+#----------------------------------------------------------------------
+trim() {
+    local line
+
+    [ ${#} -gt 0 ] && {
+        #set -- $(ltrim "${@}")
+        rtrim "$(ltrim "${@}")"
+        return 0
+    }
+
+    while read -r line; do #{
+        rtrim "$(ltrim "${line}")"
+    done #}
+    return 0
+} # trim()
+
 # Pad a base32 string to make it standards compliant
 base32pad() {
     local line pad
