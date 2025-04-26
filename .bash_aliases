@@ -492,6 +492,8 @@ unziptodir() {
     done #}
 } # unziptodir()
 
+alias debextract='ar x'
+
 #=============================================================================}
 
 
@@ -579,6 +581,71 @@ isfloat() {
 
     return 0
 } # isfloat()
+
+#function==============================================================
+# randnum
+#======================================================================
+# generates a randum number between 2 bounds
+#----------------------------------------------------------------------
+# randnum <LOWER> <UPPER>
+#----------------------------------------------------------------------
+randnum() {
+    local RANDMAX tempn num
+
+    # local is the default for declare unless -g is used
+    declare -a param
+
+    # man bash says 32767 is max
+    RANDMAX=32767
+
+    if [ $# -ne 2 ] ||\
+    [ "${1}" == "--help" ] ||\
+    [ "${1}" == "-h" ]\
+    ; then #{
+
+cat <<EOF >&2
+Usage: randnum <LOWER> <UPPER>
+
+Example:
+  num 1 6
+Output:
+  3
+EOF
+
+        return
+    fi #}
+
+    # Place numbers in param[0] and param[1]
+    for ((i = 0; i < 2; ++i)); do #{
+        param[${i}]="${1}"
+
+        # Ensure they are digits
+        isint "${1}" || {
+            >&2 echo "Param $((i + 1)) invalid: ${1}"
+            return 1
+        }
+
+        shift 1
+    done #}
+
+    # Swap if req'd
+    if [ "${param[0]}" -gt "${param[1]}" ]; then #{
+        >&2 echo "WARNING: Swapping numbers (${param[0]} > ${param[1]})"
+        tempn="${param[0]}"
+        param[0]="${param[1]}"
+        param[1]="${tempn}"
+    fi #}
+
+    # Number of digits in range
+    num=$((param[1] - param[0] + 1))
+
+    if [ ${num} -gt ${RANDMAX} ]; then #{
+        >&2 echo "ERROR: Random range limited to ${RANDMAX}"
+        return 2
+    fi #}
+
+    echo "$(((RANDOM % num) + param[0]))"
+} # randnum()
 
 #=============================================================================}
 
@@ -1129,6 +1196,46 @@ base32pad() {
         cat
     ) #}
 }
+
+# Used for JSON byte arrays to base32 encoded hex data and vice-a-versa
+# (used by FreeOTP to store it's data)
+base32-to-byte-array() {
+    base32 -d < <(
+        # Explicitly stdin
+        [ ${#} -eq 1 ] && [ "${1}" == '-' ] && shift 1
+
+        # Command line supplied
+        [ ${#} -gt 0 ] && {
+            echo -n "${*}"
+            return
+        }
+
+        # Implicitly stdin
+        cat
+    )|od -An -t d1
+} # base32-to-byte-array()
+
+# Used for JSON byte arrays to base32 encoded hex data and vice-a-versa
+# (used by FreeOTP to store it's data)
+byte-array-to-base32() {
+    # shellcheck disable=SC2046 # We don't care about word splitting here
+    d="$(printf "\\\x%.2x" $({
+        # Explicitly stdin
+        [ ${#} -eq 1 ] && [ "${1}" == '-' ] && shift 1
+
+        # Command line supplied
+        [ ${#} -gt 0 ] && {
+            echo -n "${*}"
+            return
+        }
+
+        # Implicitly stdin
+        cat
+    })
+    )"
+    d="${d//xffffffffffffff/x}";
+    printf "%b" "${d}" | base32
+} # byte-array-to-base32()
 
 #=============================================================================}
 
