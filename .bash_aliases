@@ -79,8 +79,8 @@ declare -a _shoptpstack
 #   1 = shopt stack empty
 #----------------------------------------------------------------------
 shoptprint() {
-    local f
-    local i
+    # global _shoptpstack
+    local f i
 
     f="${FUNCNAME[0]}"
     [ "${FUNCNAME[1]}" != "source" ] && f="${FUNCNAME[1]}"
@@ -111,6 +111,8 @@ shoptprint() {
 #   1 = shopt stack empty
 #----------------------------------------------------------------------
 shoptpush() {
+    # global _shoptpstack
+
     _shoptpstack+=("$(\
         shopt -p "${@}"\
             |sort\
@@ -136,6 +138,7 @@ shoptpush() {
 #   1 = shopt stack empty
 #----------------------------------------------------------------------
 shoptpop() {
+    # global _shoptpstack
     local shoptss shoptsu
 
     shoptprint
@@ -239,11 +242,13 @@ test_params() {
 #----------------------------------------------------------------------
 alias isnum='isint'
 isint() {
+    local ret num
+
     [ $# -lt 1 ] && return 1
 
-    local ret=0
+    ret=0
     while [ $# -gt 0 ]; do #{
-        local num="${1#}"
+        num="${1#}"
         # Ensure param is an integer
         #[ "${1}" -eq "${1}" ] 2>/dev/null
         # shellcheck disable=SC2003 # expr returns error here which we want
@@ -720,6 +725,8 @@ alias ssh-nohostcheck='ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyCh
 #-----------------------------------------------------------------------------
 
 # Youtube-dl fork
+#alias yt-dlp='yt-dlp -S width:1920 -f '"'"'bv*+ba*/best'"'"' --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"
+#alias yt-dlp='yt-dlp                --format mp4 --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"
 alias yt-dlp='yt-dlp                --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"' --format '"'"'bestvideo*[height=768]+bestaudio/bestvideo*[height=720]+ba/bestvideo*[height=1080]+ba/bv+ba/best'"'"
 alias yt-dlp-768='yt-dlp'
 alias yt-dlp-1080='yt-dlp                                                                                    --format '"'"'bv*[height=1080]+ba/bv*[height=768]+ba/bv*[height=720]+ba/bv+ba/best'"'"
