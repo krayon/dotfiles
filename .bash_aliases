@@ -327,6 +327,197 @@ alias      ascii2utf16='iconv -f ASCII -t utf16'
 alias fold_undo='dlof'
 alias dlof='sed -e '"'"':g;N;s/\n\([^\n ]\)/ \1/;tg;p;d'"'"
 
+#function==============================================================
+# zeropad
+#======================================================================
+# zero (or any other character) pads a number
+#----------------------------------------------------------------------
+# zeropad <NUM> <NUMCHARS> [CHAR]
+#----------------------------------------------------------------------
+zeropad() {
+    local char num numchars sign expo formatd numleads
+
+    char="0"
+
+    if\
+        [ $# -lt 2 ] ||\
+        [ $# -gt 3 ] ||\
+        [ "${1}" == "--help" ] ||\
+        [ "${1}" == "-h" ]\
+    ; then #{
+
+cat <<EOF >&2
+Usage: zeropad <NUM> <NUMCHARS> [<CHAR>]
+
+    <NUM>      - Number to zero pad
+    <NUMCHARS> - Desired width (excluding negative symbol if applicable)
+    <CHAR>     - Character to pad with ( DEFAULT: ${char} )
+
+Example:
+  zeropad -59 5 x
+Output:
+  -xxx59
+EOF
+
+        return 0
+    fi #}
+
+    [ $# -eq 3 ] && char="${3}"
+
+    # Ensure params are numbers
+    num="${1}"
+    numchars="${2}"
+
+    isint "${num}" || {
+        >&2 echo "ERROR: <NUM> not a number: ${num}"
+        return 2
+    }
+
+    isint "${numchars}" || {
+        >&2 echo "ERROR: <NUMCHARS> not a number: ${numchars}"
+        return 2
+    }
+
+    num=$((num + 0))
+    numchars=$((numchars + 0))
+
+    # Sign
+    if [ "${num}" -lt 0 ]; then #{
+        num=$((num * -1))
+        sign=-1
+    fi #}
+
+    # Exponentiate 10 by the numchars
+    expo=$((10 ** numchars))
+
+    # Number is at least that number of digits so don't bother
+    if [ "${#num}" -ge "${numchars}" ]; then #{
+        echo ${sign:+'-'}${num}
+        return
+    fi #}
+
+    if [ "${char}" == "0" ]; then #{
+        formatd=$((num + expo))
+        echo ${sign:+'-'}${formatd:1}
+    else #} {
+        # Need to get tricky
+        numleads=$((numchars - ${#num}))
+        #echo "${sign:+'-'}$(echo "${expo: -${numleads}}"|tr '0' "${char}")${num}"
+        expo="${expo: -${numleads}}"
+        echo "${sign:+'-'}${expo//0/${char}}${num}"
+    fi #}
+} # zeropad()
+
+#function==============================================================
+# strpad
+#======================================================================
+# pad a string with characters on the left, right or both sides
+#----------------------------------------------------------------------
+# strpad [-l|-r] <STRING> <NUMCHARS> [CHAR]
+#----------------------------------------------------------------------
+strpad() {
+    local align padl padr char numchars padchars expo expon numpads numpadsx
+
+    align=1
+    padl=""
+    padr=""
+    char=" "
+
+    if [ "${1}" == "-l" ]; then #{
+        # Left align
+        align=0
+        shift 1
+    elif [ "${1}" == "-r" ]; then #} {
+        # Right align
+        align=2
+        shift 1
+    fi #}
+
+    if \
+       [ $# -lt 2 ] \
+    || [ $# -gt 3 ] \
+    || [ "${1}" == "--help" ] \
+    || [ "${1}" == "-h" ] \
+    ; then #{
+
+cat <<EOF >&2
+Usage: strpad [<ALIGN>] <STRING> <NUMCHARS> [<CHAR>]
+
+Options:
+  ALIGN       - The desired alignment.  Specify left (-l) or
+                right (-r) (center is default)
+  CHAR        - The character to use as padding (' ' is the default
+
+Example:
+  strpad "foo" 6 x
+Output:
+  xfooxx
+EOF
+
+        return
+    fi #}
+
+    if [ $# -eq 3 ]; then #{
+        char="${3}"
+    fi #}
+
+    str="${1}"
+
+    # Ensure numchars is a number
+    numchars="${2}"
+    isint "${numchars}" || {
+        >&2 echo "ERROR: <NUMCHARS> not a number: ${numchars}"
+        return 2
+    }
+    numchars=$((numchars + 0))
+
+    # Number is at least that number of digits so don't bother
+    if [ "${#str}" -ge "${numchars}" ]; then
+        echo "${str}"
+        return
+    fi
+
+    # Exponentiate 10 by the numchars
+    padchars="x"
+    expo=${numchars}
+    while [ "${expo}" -gt 10 ]; do #{
+        padchars="${padchars}0000000000"
+        expo=$((expo - 10))
+    done #}
+    expon=$((10 ** expo))
+    padchars="${padchars}${expon: -${expo}}"
+    unset expon
+    unset expo
+
+    numpads=$((numchars - ${#str}))
+    if [ "${align}" -ne 1 ]; then #{
+        # Left or Right
+        padl="$(echo "${padchars: -${numpads}}"|tr '0' "${char}")"
+
+        if [ ${align} -eq 0 ]; then #{
+            # Left (aligned, so pad on the right)
+            padr="${padl}"
+            padl=""
+        fi #}
+    else #} {
+        # Center
+        numpadsx=$((numpads / 2))
+        padl="$(echo "${padchars: -${numpadsx}}"|tr '0' "${char}")"
+        [ ${numpads} -eq 1 ] && {
+            # Override for numpads=1
+            numpadsx=0
+            padl=""
+        }
+        numpadsx=$((numpadsx + (numpads - (numpadsx * 2))))
+        padr="$(echo "${padchars: -${numpadsx}}"|tr '0' "${char}")"
+        unset numpadsx
+    fi #}
+    unset numpads
+
+    #echo "$(echo "${padchars: -${numpads}}"|tr '0' "${char}")${str}"
+    echo "${padl}${str}${padr}"
+} # strpad()
+
 # Pad a base32 string to make it standards compliant
 base32pad() {
     local line pad
