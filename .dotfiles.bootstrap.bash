@@ -122,7 +122,7 @@ host="$(hostname)" || {
     true
 } || {
 
-    [ ! -z "$(git --git-dir="${repo_path%/*}/.git" --work-tree="${repo_path}" -status --porcelain=v1)" ] && {
+    [ ! -z "$(git --git-dir="${repo_path%/*}/.git" --work-tree="${repo_path}" status --porcelain=v1)" ] && {
         echo "[1;31mERROR:[0;0m Repository isn't clean, refusing to delete (use -k|--keep ?)"
         exit 1
     }
