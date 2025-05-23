@@ -35,30 +35,9 @@ refreshdir() {
         # Merge
         echo -en "Merging new font dir ($(head -1 "${dir}"/fonts.dir)) data with old ($(head -1 "${dir}"/fonts.dir.BU))..."
 
-        >"${dir}"/fonts.dir.NEW
-
-        # Retrieve font file list
-        fontfiles=("$(
-            sed '1d;s# -.*$##g' "${dir}"/fonts.dir|sort -u
-        )")
-        for font in "${fontfiles[@]}"; do #{
-            if [ -r "${dir}"/fonts.dir.BU ]; then #{
-                line="$(grep '^'"${font}"' -' "${dir}"/fonts.dir.BU)"
-                if [ -n "${line}" ]; then
-                    echo "${line}" >>"${dir}"/fonts.dir.NEW
-                else
-                    grep '^'"${font}"' -' "${dir}"/fonts.dir.BU >>"${dir}"/fonts.dir.NEW
-                fi
-
-            else #} {
-                grep '^'"${font}"' -' "${dir}"/fonts.dir >>"${dir}"/fonts.dir.NEW
-
-            fi #}
-        done #}
-
+        { tail -n +2 "${dir}"/fonts.dir; tail -n +2 "${dir}"/fonts.dir.BU; }|sort -u >"${dir}"/fonts.dir.NEW
         read numfonts _ < <(wc -l "${dir}"/fonts.dir.NEW)
-        { echo "${numfonts}"; cat "${dir}"/fonts.dir.NEW; } >"${dir}"/fonts.dir.NEW2
-        mv "${dir}"/fonts.dir.NEW2 "${dir}"/fonts.dir
+        { echo "${numfonts}"; cat "${dir}"/fonts.dir.NEW; } >"${dir}"/fonts.dir
 
         echo -en " [done]\n"
     fi #}
