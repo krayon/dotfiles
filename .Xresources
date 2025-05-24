@@ -121,8 +121,11 @@ URxvt*cursorBlink:           1
 !.pointerShape: circle
 
 
-! Helps with powerline symbol-seams?
+! Helps with powerline symbol-seams
 URxvt*letterSpace: -1
+
+! Negatives not supported for this :(
+URxvt*lineSpace:    0
 
 ! List fonts to get proper name to use: fc-list
 
@@ -203,6 +206,9 @@ URxvt*color13:                   MediumOrchid
 !When theres a bell, generate a WM urgent message
 URxvt*urgentOnBell:              true
 
+!Alternative path for perl extensions ( DEFAULT: ~/.urxvt/ext )
+!URxvt*perl-lib:                  /home/krayon/.urxvt-perl
+
 URxvt*perl-ext-common:           default,matcher
 !URxvt*colorUL:                   #86A2BE
 !URxvt*matcher.rend.0:            Uline Bold fg5 bg6
@@ -216,12 +222,9 @@ URxvt*urlLauncher:               x-www-browser
 !URxvt*keysym.Control-Delete:     perl:matcher
 !URxvt*underlineURLs:             true
 
-!Disable urxvts CTRL-SHIFT love ( but all the unicode behaviour :( )
+!Disable urxvts CTRL-SHIFT love ( but all the unicode behaviour (doh) ... and what else? )
 !URxvt*iso14755_52:               false
 !URxvt*iso14755:                  false
-
-!Alternative path for perl exts?
-!URxvt*perl-lib:                  /home/krayon/.urxvt-perl
 
 !Alt+u -able URLs
 URxvt*perl-ext:                  default,url-select,keyboard-select,clipboard,font-size
@@ -241,6 +244,7 @@ URxvt*keysym.Control-u:          perl:enter-unicode:start
 URxvt*perl-ext:                  default,url-select,keyboard-select,clipboard,font-size,enter-unicode,-confirm-paste
 
 ! ... and keyboard selectable text with Ctrl+i :D
+!URxvt*keysym.Control-Shift-x:    perl:keyboard-select:activate
 URxvt*keysym.Control-i:          perl:keyboard-select:activate
 !Doesnt work, even with iso14755 disabled above (at least with version 9.15-3
 !URxvt*keysym.Control-I:          perl:clipboard:paste
