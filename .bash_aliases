@@ -1373,3 +1373,56 @@ yt-dlp-google-link() {
 }
 
 #=============================================================================}
+
+
+############################################################
+# Misc - Android
+############################################################
+
+alias adb-list-open-sockets='adb shell cat /proc/net/unix'
+alias adb-list-packages='adb shell pm list packages -f -i -U -u'
+alias adb-dump-info-on-all-packages='adb shell dumpsys package packages'
+alias adb-dump-info-on-one-package='adb shell dump'
+alias adb-path-to-apk='adb shell path'
+
+adb-chrome-list-tabs() {
+    local outfile
+
+    outfile="/tmp/adb-chrome-list-tabs.$$.json"
+
+cat <<EOF
+Please ensure you have enabled Android USB debugging in Developer options.
+
+The following steps will then be performed:
+    1. Launch 'adb', forwarding local TCP port 9222 to the android socket 'chrome_devtools_remote'
+    2. Connect to that socket and send a debug command to return all tabs ( '/json/list' )
+    3. Store the returned JSON in ${outfile}
+    4. Parse the JSON file and output the ID, URL and page title of each tab
+
+Press ENTER once Android USB debugging is enabled.
+EOF
+
+    read
+
+    echo \
+    adb forward tcp:9222 localabstract:chrome_devtools_remote
+    adb forward tcp:9222 localabstract:chrome_devtools_remote
+
+    wget -qO "${outfile}" http://localhost:9222/json/list
+    jq -r '.[]|(.id + " " + .url + " " + .title)' <"${outfile}"
+}
+
+adb-run-apk() {
+    local pkg
+    local act
+
+    [ ${#} -ne 1 ] || [ ! -f "${1}" ] && {
+        echo "Usage: ${0##*/} <file.apk>"
+        exit 1
+    }
+
+    pkg=$(aapt dump badging "${1}"|awk -F" " '/package/ {print $2}'|awk -F"'" '/name=/ {print $2}')
+    act=$(aapt dump badging "${1}"|awk -F" " '/launchable-activity/ {print $2}'|awk -F"'" '/name=/ {print $2}')
+    adb shell am start -n "${pkg}/${act}"
+}
+
