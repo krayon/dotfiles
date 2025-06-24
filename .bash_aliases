@@ -38,7 +38,9 @@ type -P vim &>/dev/null && {
 # The greatest thing EVER! Because alias get's expanded out first, the end
 # result is sudo/fork supporting YOUR aliases (NOTE: the command could be used
 # as the alias name directly to make it do it all the time :D)
-alias sudoa='sudo '
+#
+# Here, we also include our PATH (_little_ dangerous but we use it with care)
+alias sudoa='sudo env "PATH=$PATH" '
 alias forka='fork '
 
 # Kill current terminal (no history writing, immediate bailout)
