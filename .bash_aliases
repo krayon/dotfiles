@@ -1338,6 +1338,7 @@ alias yt-dlp-768='yt-dlp'
 alias yt-dlp-1080='yt-dlp                                                                                    --format '"'"'bv*[height=1080]+ba/bv*[height=768]+ba/bv*[height=720]+ba/bv+ba/best'"'"
 alias yt-dlp-best='yt-dlp                                                                                    --format '"'"'bv+ba/best/bv*[height=1080]+ba/bv*[height=768]+ba/bv*[height=720]+ba'"'"
 alias yt-dlp-mp4='yt-dlp                                                                                     --format mp4'
+alias yt-dlp-audio-only='yt-dlp                                                                              --format '"'"'best*[vcodec=none]'"'"' -x'
 alias yt-dlp-playlist='yt-dlp       --output '"'"'%(playlist_title)s.%(playlist_index)s.%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"
 alias yt-dlp-playlist-date='yt-dlp  --output '"'"'%(playlist_title)s.%(release_date,upload_date)s.%(title)s.%(playlist_index)s.%(id)s.%(ext)s'"'"
 alias yt-dlp-playlist-index='yt-dlp --output '"'"'%(playlist_title)s.%(playlist_index)s.%(title)s.%(id)s.%(ext)s'"'"
@@ -1348,6 +1349,7 @@ yt-dlp-google-link() {
     if [ "$#" -gt 0 ]; then #{
         while [ "$#" -gt 0 ]; do #{
             vid="${1/#*google.com*www.youtube.com\/watch\?v=/}"
+            vid="${vid/#*google.com*www.youtube.com\/watch%3Fv%3D/}"
             vid="${vid/#*google.com*www.youtube.com%3Fwatch%3Fv%3D/}"
             vids+=("${vid%%&*}")
             >&2 echo "${vids[@]}"
@@ -1359,6 +1361,7 @@ yt-dlp-google-link() {
         local url=''
         while read -r url; do #{
             vid="${url/#*google.com*www.youtube.com\/watch\?v=/}"
+            vid="${vid/#*google.com*www.youtube.com\/watch%3Fv%3D/}"
             vid="${vid/#*google.com*www.youtube.com%3Fwatch%3Fv%3D/}"
             vids+=("${vid%%&*}")
             >&2 echo "${vids[@]}"
