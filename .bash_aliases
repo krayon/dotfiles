@@ -115,12 +115,13 @@ shoptprint() {
 shoptpush() {
     # global _shoptpstack
 
+    # This produces a list that ALWAYS starts with '-s', followed by 0 or more
+    # shopts to set, followed by '-u', followed by 0 or more shopts to unset
     _shoptpstack+=("$(\
         shopt -p "${@}"\
             |sort\
-            |sed 's#^shopt ##'\
             |tr '\n' ' '\
-            |sed 's#\(.\) -s #\1 #g;s# -u#&&#;s# -u # #g'\
+            |sed 's/shopt //g;s/^/ -s /;s/$/ -u /;s/\(.\) -s /\1 /g;s/ -u/&&/;s/ -u / /g'
     )")
 
     shoptprint
@@ -146,17 +147,17 @@ shoptpop() {
     shoptprint
 
     [ ${#_shoptpstack[@]} -ge 1 ] && {
-        shoptss="$(sed -n 's#^\(-s.*\)-u.*$#\1#p' <<<"${_shoptpstack[-1]}")"
-        shoptsu="$(sed -n 's#^.*\(-u.*\)$#\1#p'   <<<"${_shoptpstack[-1]}")"
+        shoptss="$(sed -n 's#^[ ]*-s\(.*\)-u.*$#\1#p' <<<"${_shoptpstack[-1]}")"
+        shoptsu="$(sed -n 's#^.*-u\(.*\)$#\1#p'       <<<"${_shoptpstack[-1]}")"
         unset '_shoptpstack[-1]'
 
         # SC2086 (info): Double quote to prevent globbing and word splitting.
         # We want these expanded as each shopt is a single parameter and these
         # variables contain the '-s'/'-u' flag and the parameters all in one.
         # shellcheck disable=SC2086 # We want these expanded
-        [ -n "${shoptss}" ] && shopt ${shoptss}
+        [ -n "${shoptss// }" ] && shopt -s ${shoptss}
         # shellcheck disable=SC2086 # We want these expanded
-        [ -n "${shoptsu}" ] && shopt ${shoptsu}
+        [ -n "${shoptsu// }" ] && shopt -u ${shoptsu}
     }
 }
 
