@@ -1333,6 +1333,94 @@ alias ssh-nohostcheck='ssh -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyCh
 # Misc
 #-----------------------------------------------------------------------------
 
+#function==============================================================
+# xclip-file
+#======================================================================
+# Fills clipboard with file with mimetype for direct pasting into stuffs
+#----------------------------------------------------------------------
+# xclip-file [--mimetype|-m <MIME_TYPE>] <FILE>
+# xclip-file [--mimetype|-m <MIME_TYPE>] [-] < <FILE>
+# xclip-file [--mimetype|-m <MIME_TYPE>] [-] < <( COMMAND_THAT_OUTPUTS_FILE )
+#
+# xclip-img [--mimetype|-m <MIME_TYPE>] <FILE>
+# xclip-img [--mimetype|-m <MIME_TYPE>] [-] < <FILE>
+# xclip-img [--mimetype|-m <MIME_TYPE>] [-] < <( COMMAND_THAT_OUTPUTS_FILE )
+#----------------------------------------------------------------------
+# Outputs:
+#   NOTHING
+# Returns:
+#   0 = Success
+#   1 = Failure
+#       (or no <VAR_NAME> provided)
+# Actions:
+#   Stores the file contents in the clipboard with the appropriate (or
+#   supplied) mimetype.
+#----------------------------------------------------------------------
+alias xclip-img='xclip-file'
+xclip-file() {
+    local mimetype infile
+    declare -A mimetypes
+
+    infile=''
+    mimetype=''
+
+    if [ "$1" == '-m' ] || [ "$1" == '--mimetype' ]; then #{
+        # Mimetype
+
+        [ $# -lt 2 ] && {
+            >&2 echo "ERROR: No mimetype provided but '$1' specified"
+            return 1
+        }
+
+        mimetype="$2"
+        shift 2
+
+        sed '/^#/d;/^$/d;s#\t.*$##' </etc/mime.types\
+        |grep "^${mimetype}$" &>/dev/null || {
+            >&2 echo "WARNING: Mimetype unknown: ${mimetype}"
+        }
+    fi #}
+
+    [ $# -gt 0 ] && {
+        [ "$1" != '-' ] && [ ! -e "$1" ] && {
+            >&2 echo "ERROR: File does not exist: $1"
+            return 1
+        }
+
+        [ "$1" != '-' ] && infile="$1"
+        shift 1
+    }
+
+    [ $# -gt 0 ] && {
+        >&2 echo "ERROR: Too many parameters: ${*}"
+        return 1
+    }
+
+    [ -z "${infile}" ] && {
+        # stdin
+        infile="$(mktemp --tmpdir "tmp.${FUNCNAME[0]}.$$.XXXXX")" || {
+            echo "ERROR: Failed to create temp file"
+            return 2
+        }
+
+        # Delete temp file when we're done
+        trap 'rm "'"${infile}"'"' 0 1 2 15 RETURN
+
+        cat >"${infile}"
+    }
+
+    [ -z "${mimetype}" ] && {
+        read mimetype < <(\
+            file --mime-type --no-pad --print0 --separator '' "${infile}"\
+            |cut -d '' -f2\
+        )
+
+        [ -z "${mimetype}" ] && >&2 echo "WARNING: Unable to identify mimetype"
+    }
+
+    xclip -selection clipboard -t "${mimetype}" <"${infile}"
+}
+
 # Youtube-dl fork
 #alias yt-dlp='yt-dlp -S width:1920 -f '"'"'bv*+ba*/best'"'"' --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"
 #alias yt-dlp='yt-dlp                --format mp4 --output '"'"'%(title)s.%(release_date,upload_date)s.%(id)s.%(ext)s'"'"
