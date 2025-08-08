@@ -1,3 +1,10 @@
+# Installation:
+#   1. Copy to your ~/.local/share/applications/ directory:
+#     mkdir -p ~/.local/share/applications/
+#     cp x-www-browser.desktop ~/.local/share/applications/
+#   2. Set xdg-mime default:
+#     xdg-mime default x-www-browser.desktop x-scheme-handler/http
+
 [Desktop Entry]
 Type=Application
 Encoding=UTF-8
