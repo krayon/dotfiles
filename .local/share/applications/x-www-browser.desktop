@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=x-www-browser
+Comment=Launches my x-www-browser script
+Exec=x-www-browser
+Icon=browser
+Terminal=false
+Categories=System;
+Path=
+StartupNotify=false
+NoDisplay=true
+Categories=Utility;
+
