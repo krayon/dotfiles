@@ -199,6 +199,9 @@ fi
 # Include architecture specific .bashrc
 [ -r ~/.bashrc.ARCH ] && . ~/.bashrc.ARCH
 
+# Include OS specific .bashrc
+[ -r ~/.bashrc.OS ] && . ~/.bashrc.OS
+
 # Include local host .bashrc
 [ -r ~/.bashrc.HOST ] && . ~/.bashrc.HOST
 
@@ -207,6 +210,9 @@ fi
 
 # Include architecture specific .bash_aliases
 [ -r ~/.bash_aliases.ARCH ] && . ~/.bash_aliases.ARCH
+
+# Include OS specific .bash_aliases
+[ -r ~/.bash_aliases.OS ] && . ~/.bash_aliases.OS
 
 # Include local host .bash_aliases
 [ -r ~/.bash_aliases.HOST ] && . ~/.bash_aliases.HOST

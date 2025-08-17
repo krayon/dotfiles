@@ -23,11 +23,14 @@ fi #}
 if [ -d "$HOME/bin.ARCH" ]; then #{
     prepath="$HOME/bin.ARCH:$prepath"
 fi #}
+if [ -d "$HOME/bin.OS" ]; then #{
+    prepath="$HOME/bin.OS:$prepath"
+fi #}
 if [ -d "$HOME/bin.HOST" ]; then #{
     prepath="$HOME/bin.HOST:$prepath"
 fi #}
 # DON'T NEED man PATH SET ANYMORE?
-#premanpath="$HOME/man.HOST:$HOME/man.ARCH:$workpath$HOME/man"
+#premanpath="$HOME/man.HOST:$HOME/man.OS:$HOME/man.ARCH:$workpath$HOME/man"
 
 
 
