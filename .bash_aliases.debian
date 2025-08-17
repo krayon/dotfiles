@@ -1,0 +1,20 @@
+############################################################
+# ~/.bash_aliases.debian
+############################################################
+# vim:et:ts=4:sw=4:ai:si
+
+# Are we being run?
+[ "${0}" == "${BASH_SOURCE}" ] && {
+    # Oh HELL no
+    echo "Non-executable, source file instead"
+    exit 1
+}
+
+#alias apt-purge='apt-get autoremove --purge'
+alias apt-purge='apt-get purge --auto-remove'
+
+alias apt-cache-recurse-depends='>&2 echo -e "NOTE: Calling apt-rdepends ...\n"; sleep .3; apt-rdepends'
+alias apt-cache-reverse-depends='>&2 echo -e "NOTE: Calling apt-cache rdepends ...\n"; sleep .3; apt-cache rdepends'
+alias apt-cache-depends-on='apt-cache-reverse-depends'
+
+alias apt-get-non-interactive='DEBIAN_FRONTEND=noninteractive RUNLEVEL=1 apt-get'
