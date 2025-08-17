@@ -37,11 +37,17 @@ au BufNewFile * set noeol
 " VIM, X11-clipboard is NOT for you asshole!
 :set clipboard=
 
+" It's important to know your history
+:set history=10000
+
 " Always have line numbers
 :set number
 
 " Always highlight on search
 :set hlsearch
+
+" English (/Australian) spelling, not 'merican
+:set spelllang=en_au
 
 " Read modeline's in files for formatting
 :set modeline
@@ -489,6 +495,13 @@ if has("gui_running") "{
     set guifont=Noto\ Mono\ 10
     "set guifont=Fira\ Code\ Regular\ 10
 
+    " Have GUI based tabs (labelled "<MODIFIED STATUS CHAR> <TITLE>")
+    set guioptions+=e
+    set guitablabel=%M\ %t
+endif "}
+
+if (has('termguicolors') && &termguicolors) || has('gui_running') "{
+
     " Colour Schemes:
     "     darkblue
     "     desert
@@ -506,10 +519,6 @@ if has("gui_running") "{
     colorscheme morning
 
     colorscheme slate
-
-    " Have GUI based tabs (labelled "<MODIFIED STATUS CHAR> <TITLE>")
-    set guioptions+=e
-    set guitablabel=%M\ %t
 endif "}
 
 " Debug mapping by outputting to a file
