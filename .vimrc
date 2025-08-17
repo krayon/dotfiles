@@ -125,6 +125,17 @@ vnoremap // y/<C-R>"<CR>
 :nmap        <C-k> winnr('#')>1 ? '<C-k>j'
 :nmap        <C-h> winnr('#')>1 ? '<C-h>j'
 
+" Mappings for opening file under cursor
+"
+" gf             == Open file under cursor in current window
+" CTRL-w, f      == Open file in new horizontal split window
+" CTRL-w, CTRL-f == Open file in new vertical   split window (defined below)
+" CTRL-w, gf     == Open file in new tab
+
+" Map CTRL-w,CTRL-f to open the file/path the cursor is currently on, in a new
+" split (vertical) window
+:noremap <C-w><C-f> <C-w>v<C-w>lgf
+
 " Remap <Enter> to <C-y> when popup menu is visible (to select highlighted
 " item) (in insert mode (_i_noremap))
 " https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
