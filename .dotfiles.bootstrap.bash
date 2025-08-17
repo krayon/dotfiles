@@ -34,34 +34,51 @@ trap cleanup EXIT
 
 # Create host symlinks
 create_symlinks() {
-    [ -z "${host}" ] && {
-        echo "Skipping creation of host symlinks - no hostname identified"
-        exit 1
+    local ARCH OS HOST
+
+    # Get architecture
+    ARCH="$(uname -m)" || {
+        echo "[1;31mWARNING:[0;0m Failed to identify architecture"
+    }
+
+    # Get OS
+    OS="$(sed -n 's/^[ \t]*ID[ \t]*=[ \t]*["]\?\([^" \t]*\)["]\?[ \t]*$/\1/p' </etc/os-release)" || {
+
+        echo "[1;31mWARNING:[0;0m Failed to identify Operating System"
+    }
+
+    # Host
+    [ -n "${host}" ] && {
+        HOST="${host}"
+    } || {
+        echo "[1;31mWARNING:[0;0m Skipping creation of host symlinks - no hostname identified"
     }
 
     for f in bin/ .bashrc .bash_aliases; do #{
-        # Directory check
-        [ "${f: -1:1}" == '/' ] && {
-            # Ensure directories only have a single '/'
-            while [ "${f: -1:1}" == '/' ]; do f="${f:0: -1}"; done
-            f+='/'
+        for a in ARCH OS HOST; do #{
+            # Skip unknowns/empty
+            [ -z "${!a}" ] && continue
 
-            src="${f%/*}.${host}/"
-            dst="${f%/*}.HOST"
+            # Strip extra slashes from directories
+            while [ "${f: -2:2}" == '//' ]; do f="${f:0: -1}"; done
 
-            true
-        } || {
-            src="${f}.${host}"
-            dst="${f}.HOST"
-        }
+            # Directory
+            if [ "${f: -1:1}" == '/' ]; then #{
+                src="${f%/*}.${!a}/"
+                dst="${f%/*}.${a}"
+            else #}{
+                src="${f}.${!a}"
+                dst="${f}.${a}"
+            fi #}
 
-        # Check for existance of file or directory (trailing '/' will ensure
-        # accurate directory match)
-        [ ! -e "${work_tree%/*}/${src}" ] && continue
+            # Check for existance of file or directory (trailing '/' will ensure
+            # accurate directory match)
+            [ ! -e "${work_tree%/*}/${src}" ] && continue
 
-        ln -s "${src}" "${work_tree%/*}/${dst}" || {
-            echo "[1;31mWARNING:[0;0m Failed to symlink ${dst} to ${src} in ${work_tree}"
-        }
+            ln -s "${src}" "${work_tree%/*}/${dst}" || {
+                echo "[1;31mWARNING:[0;0m Failed to symlink ${dst} to ${src} in ${work_tree}"
+            }
+        done #}
     done #}
 }
 

@@ -64,8 +64,13 @@ architecture is that returned by the `uname -m` command. For example:
 ## OS specific
 
 The next set of files and directories are common to each Operating System (OS).
-The OS is that returned by the command
-`grep '^ID[ ]*=' /etc/os-release|cut -d'=' -f2-|tr -d '"'` . For example:
+The OS is that returned by the command:
+
+```bash
+sed -n 's/^[ \t]*ID[ \t]*=[ \t]*["]\?\([^" \t]*\)["]\?[ \t]*$/\1/p' </etc/os-release
+```
+
+For example:
 
 - `.bashrc.devuan`
 - `.bash_aliases.rhel`
