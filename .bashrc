@@ -4,6 +4,7 @@
 
 # SUPPORT FILES:
 #   .sh_set_path
+#   .colours
 
 # Include PATH
 . ~/.sh_set_path 2>/dev/null
@@ -175,14 +176,14 @@ fi
 #alias la='ls -A'
 #alias l='ls -CF'
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+# INCLUDED LATER # # Alias definitions.
+# INCLUDED LATER # # You may want to put all your additions into a separate file like
+# INCLUDED LATER # # ~/.bash_aliases, instead of adding them here directly.
+# INCLUDED LATER # # See /usr/share/doc/bash-doc/examples in the bash-doc package.
+# INCLUDED LATER #
+# INCLUDED LATER # if [ -f ~/.bash_aliases ]; then
+# INCLUDED LATER #     . ~/.bash_aliases
+# INCLUDED LATER # fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -195,11 +196,17 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# Include architecture specific .bashrc
+[ -r ~/.bashrc.ARCH ] && . ~/.bashrc.ARCH
+
 # Include local host .bashrc
 [ -r ~/.bashrc.HOST ] && . ~/.bashrc.HOST
 
 # Include general .bash_aliases
 [ -r ~/.bash_aliases ] && . ~/.bash_aliases
+
+# Include architecture specific .bash_aliases
+[ -r ~/.bash_aliases.ARCH ] && . ~/.bash_aliases.ARCH
 
 # Include local host .bash_aliases
 [ -r ~/.bash_aliases.HOST ] && . ~/.bash_aliases.HOST
