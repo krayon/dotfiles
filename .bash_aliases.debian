@@ -1,14 +1,20 @@
 ############################################################
 # ~/.bash_aliases.debian
 ############################################################
-# vim:et:ts=4:sw=4:ai:si
+# vim:set ts=4 sw=4 tw=80 et ai si cindent cino=L0,b1,(1s,U1,m1,j1,J1,)50,*90 cinkeys=0{,0},0),0],\:,0#,!^F,o,O,e,0=break:
 
 # Are we being run?
-[ "${0}" == "${BASH_SOURCE}" ] && {
+[ "${0}" == "${BASH_SOURCE[0]}" ] && {
     # Oh HELL no
-    echo "Non-executable, source file instead"
+    >&2 echo "ERROR: Non-executable, source file instead"
     exit 1
 }
+
+
+
+##############################################################################{
+# APT Action
+#-----------------------------------------------------------------------------
 
 #alias apt-purge='apt-get autoremove --purge'
 alias apt-purge='apt-get purge --auto-remove'
