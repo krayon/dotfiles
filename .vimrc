@@ -503,22 +503,17 @@ endif "}
 if (has('termguicolors') && &termguicolors) || has('gui_running') "{
 
     " Colour Schemes:
-    "     darkblue
+    "     darkblue       # Gooder
     "     desert
     "     koehler
+    "     morning        # Light
+    "     evening        # Good (but GoodEST when using slate's BGCOLOR)
     "     pablo
-    "     slate
+    "     slate          # Good-er-er
 
-    " This colour scheme is nice...
     colorscheme evening
-
-    " This is better
-    colorscheme darkblue
-
-    " This is light
-    colorscheme morning
-
-    colorscheme slate
+    # slate's BG colour
+    hi Normal guibg=grey15
 endif "}
 
 " Debug mapping by outputting to a file
