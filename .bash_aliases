@@ -547,7 +547,7 @@ isint() {
 } # isint()
 
 #function==============================================================
-# isfloat
+# isfloat v2.0
 #======================================================================
 # Returns if the string(s) provided is a float or not
 #----------------------------------------------------------------------
@@ -561,29 +561,36 @@ isint() {
 #       (or no <STRING> provided)
 #----------------------------------------------------------------------
 isfloat() {
-    local prec=''
-    local fl=''
+    local ret=0
+    local tmp=''
+    local num
 
     [ $# -lt 1 ] && return 1
 
     ret=0
     while [ $# -gt 0 ]; do #{
-        # Ensure param is a float
-        prec="${1#*.}"; [ "${prec}" == "${1}" ] && prec=0 || prec="${#prec}"
-        # shellcheck disable=SC2015 # Useless warning - this is not an if-then-else
-        fl="$(printf "%.${prec}f" "${1}" 2>/dev/null)$([ "${1: -1}" == '.' ] && echo '.')" && [ "${fl}" == "${1}" ] || {
-            # Invalid float
-            >&2 echo "WARNING: Invalid float: ${1}"
+        num="${1}"; shift 1
+
+        # Remove leading and trailing spaces and tabs
+        while [ "${num:0:1}"   == '\t' ] || [ "${num:0:1}}"   == ' ' ]; do num="${num:1}"    ; done
+        while [ "${num: -1:1}" == '\t' ] || [ "${num: -1:1}}" == ' ' ]; do num="${num:0: -1}"; done
+
+        # Remove leading '-' (if present)
+        [ "${num:0:1}" == '-' ] && num="${num:1}"
+
+        # Ensure this trimmed string, with it's leading '-' removed if it had
+        # one, has only numbers and an optional maximum of one '.'
+        tmp="$(tr -cd '[.]' <<<"${num}")"
+        [ -n "$(tr -d '[0-9.]' <<<"${num}")" ] || [ "${#tmp}" -gt 1 ] && {
+            >&2 echo "WARNING: Invalid float: ${num}"
             ret=1
-            shift 1
             continue
         }
-
-        shift 1
     done #}
 
-    return 0
+    return ${ret}
 } # isfloat()
+
 
 #function==============================================================
 # randnum
