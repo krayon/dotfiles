@@ -22,12 +22,12 @@ esac
 
 # Add colours
 . ~/.colours || {
-    _col_no=1
+    export _col_no=1
 }
 
 # Input (key binds)
 [ -r "${HOME}/.inputrc" ] && {
-    # Parse inputrc ourselves
+    # Parse inputrc ourselves as bash doesn't always honour inputrc contents?
 
     # Skip:
     #   - empty lines
@@ -40,6 +40,7 @@ esac
         || [ "${line:0:8}" == '$include' ]\
         || [ "${line:0:4}" == 'set '     ]\
         && continue
+        # TODO: $include
 
         # At this point, we _assume_ the rest of the lines are binds
         bind "${line}"
@@ -52,18 +53,25 @@ esac
 # BASH HISTORY
 #-----------------------------------------------------------------------------
 
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
+# HISTCONTROL: See bash(1) for more options
+#   - Don't store sequential duplicate commands (ignoredups, ignoreboth)
+#   - Don't store commands if they start with space (ignorespace, ignoreboth)
+#   - Erase (non-)sequential duplicate commands (erasedups)
+#export HISTIGNORE=\& # ALTERNATIVE: Ignore dups
+export HISTCONTROL=ignorespace:ignoredups:erasedups
 
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000000
-HISTFILESIZE=1000000
+# DISABLED - doesn't even exist in <UP>/previous command history, no good
+## Ignore common commands
+#export HISTIGNORE='pwd:ls:ls -la:ls -lah:ls -latr'
+
+# 1000000 entries please
+export HISTSIZE=1000000
+export HISTFILESIZE=1000000
 
 # timestamp bash history entries
-HISTTIMEFORMAT='%F %T '
+export HISTTIMEFORMAT='%F %T '
 
-# append to the history file, don't overwrite it
+# Append to the history file, don't overwrite it
 shopt -s histappend
 
 #=============================================================================}
@@ -75,9 +83,9 @@ shopt -s histappend
 type -P vim &>/dev/null && {
     # Set VISUAL and EDITOR variables to control default editor used
     # Set FCEDIT variables to control fc's (bash's builtin fix-command) editor
-    VISUAL=vim
-    EDITOR=vim
-    FCEDIT=vim
+    export VISUAL=vim
+    export EDITOR=vim
+    export FCEDIT=vim
 }
 
 #=============================================================================}
@@ -91,28 +99,38 @@ type -P vim &>/dev/null && {
 #   * Set less to be more prompty than more (-M)
 #   * Disable termcap initialization and deinitialization (-X, causes screen to
 #     clear etc)
-LESS=-FMX
+export LESS=-FMX
 
 # Disable less history
-LESSHISTFILE=-
+export LESSHISTFILE=-
 
 type -P less &>/dev/null && {
     # Set PAGER to control default pager
-    PAGER=less
+    export PAGER=less
 }
+
+# Make less more friendly for non-text input files, see lesspipe(1)/lessfile(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 #=============================================================================}
 
-# check the window size after each command and, if necessary,
+# Check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
+
+# Turn on bash's check that a command in cache (hash) still exists where bash
+# thinks it does, otherwise it forgets it. This saves you from having to run
+# "hash -d" manually.
+shopt -s checkhash
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-# make less more friendly for non-text input files, see lesspipe(1)
-#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+# If set, glob patterns (such as "test*") will expand to null if no matching
+# files are found. Without it, it will be treated as a literal when no files
+# match.
+#shopt -s nullglob
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
