@@ -4,6 +4,7 @@
 #
 
 # Uses readline:
+#   python RPL
 #   HEAPS OF STUFF!
 
 # ***********************************************************************
@@ -18,6 +19,9 @@ $include /etc/inputrc
 # vi style editing :D
 set editing-mode vi
 set keymap       vi
+
+# Reduce delay to recognise escape (in ms) DEFAULT: 500
+set keyseq-timeout 200
 
 # Defaults hard coded into bash (WTF)
 # https://github.com/gitGNU/gnu_bash/blob/bc007799f0e1362100375bb95d952d28de4c62fb/bashline.c#L566
@@ -59,3 +63,10 @@ Control-k:menu-complete
 #
 # Adding this option to your .inputrc will fix the keypad problem for all applications using readline.
 set enable-keypad on
+
+# Change the cursor between command/insert mode (see below)
+set show-mode-in-prompt on
+
+# In VI mode, make insert an I bar and command a block
+set vi-cmd-mode-string "\1\e[2 q\2"
+set vi-ins-mode-string "\1\e[6 q\2"
