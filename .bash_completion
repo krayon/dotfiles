@@ -1,0 +1,24 @@
+# vim:set ts=4 sw=4 tw=80 et ai si cindent cino=L0,b1,(1s,U1,m1,j1,J1,)50,*90 cinkeys=0{,0},0),0],\:,0#,!^F,o,O,e,0=break:
+
+# source user compat completion _directory_ definitions
+_bashcompl_prepath="${BASH_COMPLETION_USER_FILE:-${HOME}/.bash_completion}"
+
+for _bashcompl_prepath_d in \
+    "${_bashcompl_prepath}.d/" \
+    "${_bashcompl_prepath}.ARCH.d/" \
+    "${_bashcompl_prepath}.HOST.d/" \
+; do #{
+    [ ! -d "${_bashcompl_prepath_d}" ] && continue
+    [ ! -r "${_bashcompl_prepath_d}" ] && continue
+    [ ! -x "${_bashcompl_prepath_d}" ] && continue
+
+    for _bashcompl_prepath_f in "${_bashcompl_prepath_d}"/*; do #{
+        [ ! -f "${_bashcompl_prepath_f}" ] && continue
+        [ ! -r "${_bashcompl_prepath_f}" ] && continue
+        . "${_bashcompl_prepath_f}"
+    done #}
+done #}
+unset _bashcompl_prepath _bashcompl_prepath_d _bashcompl_prepath_f
+
+# Ensure ALL completions support filename completion
+$(complete -p|grep -Fv -- ' -f'|sed 's#^complete#complete -f#g')
