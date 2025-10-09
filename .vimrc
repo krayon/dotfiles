@@ -512,7 +512,7 @@ if (has('termguicolors') && &termguicolors) || has('gui_running') "{
     "     slate          # Good-er-er
 
     colorscheme evening
-    # slate's BG colour
+    " slate's BG colour
     hi Normal guibg=grey15
 endif "}
 
