@@ -115,13 +115,19 @@ shoptprint() {
 shoptpush() {
     # global _shoptpstack
 
-    # This produces a list that ALWAYS starts with '-s', followed by 0 or more
-    # shopts to set, followed by '-u', followed by 0 or more shopts to unset
+    # This produces a list that starts with '-s' (if there are any to set)
+    # followed by 0 or more shopts to set, followed by '-u' (if there are any to
+    # unset) followed by 0 or more shopts to unset
     _shoptpstack+=("$(\
         shopt -p "${@}"\
             |sort\
             |tr '\n' ' '\
-            |sed 's/shopt //g;s/^/ -s /;s/$/ -u /;s/\(.\) -s /\1 /g;s/ -u/&&/;s/ -u / /g'
+            |sed -e 's/shopt //g' \
+              -e 's/^/ -s /' \
+              -e 's/$/ -u /' \
+              -e 's/\(.\) -s /\1 /g' \
+              -e 's/ -u/&&/' \
+              -e 's/ -u / /g' \
     )")
 
     shoptprint
