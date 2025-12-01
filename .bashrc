@@ -6,8 +6,11 @@
 #   .sh_set_path
 #   .colours
 
+# All paths should be relative to the rc file, which may NOT be ~
+bashrc_loc="$(dirname "${BASH_SOURCE[0]}")"
+
 # Include PATH
-. ~/.sh_set_path 2>/dev/null
+. "${bashrc_loc}"/.sh_set_path 2>/dev/null
 
 # For each PATH, man adds PATH/../man/ to the MANPATH so this is unnecessary :D
 #     UPDATE 20201001: Not any more? Now we set it in .sh_set_path though so yeah...
@@ -21,7 +24,7 @@ case $- in
 esac
 
 # Add colours
-. ~/.colours || {
+. "${bashrc_loc}"/.colours || {
     export _col_no=1
 }
 
@@ -109,7 +112,7 @@ type -P less &>/dev/null && {
     export PAGER=less
 }
 
-# Make less more friendly for non-text input files, see lesspipe(1)/lessfile(1)
+# Make `less` more friendly for non-text input files, see lesspipe(1)/lessfile(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 #=============================================================================}
@@ -176,7 +179,7 @@ esac
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    test -r "${bashrc_loc}"/.dircolors && eval "$(dircolors -b "${bashrc_loc}"/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
@@ -215,22 +218,22 @@ if ! shopt -oq posix; then
 fi
 
 # Include architecture specific .bashrc
-[ -r ~/.bashrc.ARCH ] && . ~/.bashrc.ARCH
+[ -r "${bashrc_loc}"/.bashrc.ARCH ] && . "${bashrc_loc}"/.bashrc.ARCH
 
 # Include OS specific .bashrc
-[ -r ~/.bashrc.OS ] && . ~/.bashrc.OS
+[ -r "${bashrc_loc}"/.bashrc.OS ] && . "${bashrc_loc}"/.bashrc.OS
 
 # Include local host .bashrc
-[ -r ~/.bashrc.HOST ] && . ~/.bashrc.HOST
+[ -r "${bashrc_loc}"/.bashrc.HOST ] && . "${bashrc_loc}"/.bashrc.HOST
 
 # Include general .bash_aliases
-[ -r ~/.bash_aliases ] && . ~/.bash_aliases
+[ -r "${bashrc_loc}"/.bash_aliases ] && . "${bashrc_loc}"/.bash_aliases
 
 # Include architecture specific .bash_aliases
-[ -r ~/.bash_aliases.ARCH ] && . ~/.bash_aliases.ARCH
+[ -r "${bashrc_loc}"/.bash_aliases.ARCH ] && . "${bashrc_loc}"/.bash_aliases.ARCH
 
 # Include OS specific .bash_aliases
-[ -r ~/.bash_aliases.OS ] && . ~/.bash_aliases.OS
+[ -r "${bashrc_loc}"/.bash_aliases.OS ] && . "${bashrc_loc}"/.bash_aliases.OS
 
 # Include local host .bash_aliases
-[ -r ~/.bash_aliases.HOST ] && . ~/.bash_aliases.HOST
+[ -r "${bashrc_loc}"/.bash_aliases.HOST ] && . "${bashrc_loc}"/.bash_aliases.HOST
