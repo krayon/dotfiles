@@ -61,6 +61,9 @@ alias closestderr='exec 2>&-'
 alias path_cmd_cache_del='hash -d'
 alias path_cmd_cache_del_all='hash -r'
 
+# Easily identify a dodgy init system
+alias badinit='[ "$(ps -p 1 --format '"'"'comm='"'"')" == "systemd" ]'
+
 #======================================================================
 # shopt push/pop functionality
 #======================================================================
@@ -596,7 +599,6 @@ isfloat() {
 
     return ${ret}
 } # isfloat()
-
 
 #function==============================================================
 # randnum
