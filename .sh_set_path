@@ -42,7 +42,9 @@ if [ "$sh" = "bash" ]; then #{
 else #} {
     # dash/sh can't do substrings, nor string length in shell
     n_prepath=`echo "$prepath"|tr -d '\n'|wc -c`
-    preexist="`perl -e 'print substr("'"$PATH"'", 0, '$n_prepath')'`"
+    # cut is faster than perl
+    #preexist="`perl -e 'print substr("'"$PATH"'", 0, '$n_prepath')'`"
+    preexist="`echo "$PATH"|cut -c1-$n_prepath`"
     if [ "$prepath" = "$preexist" ]; then #{
         prepath=""
     fi #}
